@@ -24,3 +24,8 @@ def test(tst):
 def load_deps(ctx):
   Utils.exec_command('git submodule update --init')
 
+def shutdown():
+    t = "mysql_bindings.node"
+    if exists("build/default/deps/node-mysql-libmysqlclient/" + t) and not exists("deps/node-mysql-libmysqlclient/" + t):
+      symlink("../../build/default/deps/node-mysql-libmysqlclient/" + t, "deps/node-mysql-libmysqlclient/" + t)
+
