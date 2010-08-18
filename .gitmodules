@@ -1,0 +1,3 @@
+[submodule "deps/node-mysql-libmysqlclient"]
+	path = deps/node-mysql-libmysqlclient
+	url = git://github.com/Sannis/node-mysql-libmysqlclient.git
