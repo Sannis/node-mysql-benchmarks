@@ -1,0 +1,28 @@
+Benchmarks for MySQL clients realisations for Node.js
+=====================================================
+
+TODO(Sannis): Write some text here.
+
+== Node.JS
+
+Node is the evented I/O for V8 javascript.
+Node's goal is to provide an easy way to build scalable network programs,
+it is similar in design to and influenced by systems like Ruby's Event Machine or Python's Twisted.
+Website: http://nodejs.org
+
+== Contributing
+
+To contribute any patches, simply fork this repository using GitHub
+and send a pull request to me (http://github.com/Sannis). Thanks!
+You can find other information at
+http://github.com/Sannis/node-mysql-benchmarks/wiki/Contributing
+
+== License & Contributors
+ 
+MIT License. See license text in file LICENSE.
+
+* Oleg Efimov
+  E-mail: <efimovov@gmail.com>
+  GitHub: http://github.com/Sannis
+  Site: http://sannis.ru
+
