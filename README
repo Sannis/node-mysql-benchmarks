@@ -1,11 +1,22 @@
-Benchmarks for MySQL clients realisations for Node.js
-=====================================================
+Benchmarks for MySQL bindings for Node.js
+=========================================
 
 GitHub repo: http://github.com/Sannis/node-mysql-bindings-benchmarks
 
-TODO(Sannis): Write some text here.
+Before execute run-benchmarks.js you should prepare bindings:
 
-== Node.JS
+$ git submodule init
+$ node-waf configure build
+
+Tested with Node version v0.2.0
+
+== Supported MySQL bindings
+
+http://github.com/Sannis/node-mysql-libmysqlclient
+http://github.com/felixge/node-mysql
+http://github.com/stevebest/node-mysql
+
+== Node.js
 
 Node is the evented I/O for V8 javascript.
 Node's goal is to provide an easy way to build scalable network programs,
