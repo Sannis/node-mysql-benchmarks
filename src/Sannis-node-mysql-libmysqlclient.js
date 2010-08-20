@@ -28,7 +28,7 @@ function selectSyncBenchmark(callback) {
   var rows = res.fetchAll();
   
   total_time = ((new Date()) - start_time) / 1000;
-  sys.puts("**** " + (factor * cfg.insert_rows_count) + " rows sync selected in " + total_time + "s (" + Math.round(cfg.insert_rows_count / total_time) + "/s)");
+  sys.puts("**** " + (factor * cfg.insert_rows_count) + " rows sync selected in " + total_time + "s (" + Math.round(factor * cfg.insert_rows_count / total_time) + "/s)");
   
   // Some tests
   if (rows.length !== factor * cfg.insert_rows_count) {
