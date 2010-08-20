@@ -6,15 +6,23 @@ See license text in LICENSE file
 */
 
 var
-  bindings_list = ['Sannis-node-mysql-libmysqlclient'],
-  sys = require("sys"),
-  benchmark;
+  //bindings_list = ['Sannis-node-mysql-libmysqlclient'],
+  bindings_list = ['Sannis-node-mysql-libmysqlclient', 'felixge-node-mysql'],
+  sys = require("sys");
 
+function runNextBenchmark() {
+  if (bindings_list.length > 0) {
+    var binding_name = bindings_list.shift();
+    sys.puts("\033[1mBenchmarking " + binding_name + ":\033[22m");
+    
+    var benchmark = require("./src/" + binding_name);
+    benchmark.run(function () {
+      runNextBenchmark();
+    });
+  } else {
+    sys.puts("\033[1mAll benchmarks finished\033[22m");
+  }
+}
 
-bindings_list.forEach(function (name) {
-  sys.puts("\033[1mBenchmarking " + name + ":\033[22m");
-  benchmark = require("./src/" + name);
-  benchmark.run(function () {
-    sys.puts("Benchmark end");
-  });
-});
+runNextBenchmark();
+

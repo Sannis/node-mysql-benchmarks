@@ -6,30 +6,32 @@ See license text in LICENSE file
 
 /*
 > mysql -u root
-CREATE DATABASE test  DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci;
-GRANT ALL ON test.* TO test@localhost IDENTIFIED BY "";
+CREATE DATABASE test DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci;
+GRANT ALL ON test.* TO test@localhost IDENTIFIED BY "1234";
 */
 
-// Change only this variable to modify benchnark time
-var factor = 1;
+// Change only this variable to modify benchmark time
+var factor = 0.1;
 
 var cfg = {
   // Database connection settings
   host: "localhost",
   user: "test",
-  password: "",
+  password: "1234",
   database: "test",
-  database_denied: "mysql",
   test_table: "test_table",
-  charset: "utf8",
   
+  // Benchmarks parameters
   escape_count: 1000000*factor,
   string_to_escape: "str\\str\str\str\"str\'str\x00str",
   reconnect_count: 10000*factor,
   insert_rows_count: 100000*factor,
   
   // Delay before assertion check (ms)
-  delay_before_select: 1*1000
+  delay_before_select: 1*1000,
+  
+  // Run sync functions if async exists?
+  do_not_run_sync_if_async_exists: true
 };
 
 cfg.create_table_query = "CREATE TABLE " + cfg.test_table +

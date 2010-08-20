@@ -1,3 +1,6 @@
 [submodule "deps/Sannis-node-mysql-libmysqlclient"]
 	path = deps/Sannis-node-mysql-libmysqlclient
 	url = git://github.com/Sannis/node-mysql-libmysqlclient.git
+[submodule "deps/felixge-node-mysql"]
+	path = deps/felixge-node-mysql
+	url = git://github.com/felixge/node-mysql.git
