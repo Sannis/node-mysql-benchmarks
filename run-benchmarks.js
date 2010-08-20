@@ -6,13 +6,15 @@ See license text in LICENSE file
 */
 
 var
-  bindings_list = ['node-mysql-libmysqlclient'],
+  bindings_list = ['Sannis-node-mysql-libmysqlclient'],
   sys = require("sys"),
   benchmark;
 
 
 bindings_list.forEach(function (name) {
   sys.puts("\033[1mBenchmarking " + name + ":\033[22m");
-  benchmark = require("./src/" + name + "/benchmark-sync");
-  benchmark.run();
+  benchmark = require("./src/" + name);
+  benchmark.run(function () {
+    sys.puts("Benchmark end");
+  });
 });
