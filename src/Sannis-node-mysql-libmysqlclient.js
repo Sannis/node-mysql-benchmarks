@@ -13,8 +13,6 @@ var
   sys = require("sys"),
   mysql = require("../deps/Sannis-node-mysql-libmysqlclient/mysql-libmysqlclient"),
   conn = mysql.createConnection(),
-  res,
-  rows,
   global_start_time,
   global_total_time;
 
@@ -26,16 +24,18 @@ function selectSyncBenchmark(callback) {
 
   start_time = new Date();
   
-  res = conn.query("SELECT * FROM " + cfg.test_table + ";");
-  rows = res.fetchAll();
+  var res = conn.query("SELECT * FROM " + cfg.test_table + ";");
+  var rows = res.fetchAll();
+  
+  total_time = ((new Date()) - start_time) / 1000;
+  sys.puts("**** " + (factor * cfg.insert_rows_count) + " rows sync selected in " + total_time + "s (" + Math.round(cfg.insert_rows_count / total_time) + "/s)");
+  
+  // Some tests
   if (rows.length !== factor * cfg.insert_rows_count) {
     sys.puts("\033[31m**** " + (factor * cfg.insert_rows_count) + " rows inserted" +
              ", but only " + rows.length + " rows selected\033[39m");
   }
   assert.deepEqual(rows[0], cfg.selected_row_example);
-  
-  total_time = ((new Date()) - start_time) / 1000;
-  sys.puts("**** " + (factor * cfg.insert_rows_count) + " rows sync selected in " + total_time + "s (" + Math.round(cfg.insert_rows_count / total_time) + "/s)");
   
   // Finish benchmark
   global_total_time = ((new Date()) - global_start_time - cfg.delay_before_select) / 1000;
@@ -77,7 +77,8 @@ function insertSyncBenchmark(callback) {
   var
     start_time,
     total_time,
-    i = 0;
+    i = 0,
+    res;
   
   start_time = new Date();
 
@@ -136,7 +137,8 @@ function escapeBenchmark(callback) {
 function startBenchmark(callback) {
   var
     start_time,
-    total_time;
+    total_time,
+    res;
   
   start_time = new Date();
   
