@@ -4,3 +4,6 @@
 [submodule "deps/felixge-node-mysql"]
 	path = deps/felixge-node-mysql
 	url = git://github.com/felixge/node-mysql.git
+[submodule "deps/stevebest-node-mysql"]
+	path = deps/stevebest-node-mysql
+	url = git://github.com/stevebest/node-mysql.git
