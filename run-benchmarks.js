@@ -6,8 +6,7 @@ See license text in LICENSE file
 */
 
 var
-  //bindings_list = ['Sannis-node-mysql-libmysqlclient'],
-  bindings_list = ['Sannis-node-mysql-libmysqlclient', 'felixge-node-mysql'],
+  bindings_list = ['Sannis-node-mysql-libmysqlclient', 'felixge-node-mysql', 'stevebest-node-mysql'],
   sys = require("sys");
 
 function runNextBenchmark() {
