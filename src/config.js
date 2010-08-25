@@ -11,7 +11,7 @@ GRANT ALL ON test.* TO test@localhost IDENTIFIED BY "1234";
 */
 
 // Change only this variable to modify benchmark time
-var factor = 0.1;
+var factor = 1;
 
 var cfg = {
   // Database connection settings
