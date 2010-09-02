@@ -23,7 +23,7 @@ exports.getConfig = function (factor) {
 
     // Benchmarks parameters
     escape_count: 1000000*factor,
-    string_to_escape: "str\\str\str\str\"str\'str\x00str",
+    string_to_escape: "str\\str\"str\'str\x00str",
     reconnect_count: 10000*factor,
     insert_rows_count: 100000*factor,
 

@@ -6,9 +6,9 @@ See license text in LICENSE file
 
 // Require modules
 var
-  assert = require("assert"),
-  sys = require("sys"),
-  mysql = require("../deps/stevebest-node-mysql/lib/mysql"),
+  assert = require('assert'),
+  sys = require('sys'),
+  mysql = require('../deps/stevebest-node-mysql/lib/mysql'),
   conn = new mysql.Connection(cfg.host, cfg.user, cfg.password, cfg.database),
   global_start_time,
   global_total_time;

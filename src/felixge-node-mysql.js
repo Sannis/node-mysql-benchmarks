@@ -6,9 +6,9 @@ See license text in LICENSE file
 
 // Require modules
 var
-  assert = require("assert"),
-  sys = require("sys"),
-  mysql_client = require("../deps/felixge-node-mysql/lib/mysql").Client,
+  assert = require('assert'),
+  sys = require('sys'),
+  mysql_client = require('../deps/felixge-node-mysql/lib/mysql').Client,
   conn = new mysql_client(),
   rows,
   global_start_time,

@@ -6,9 +6,9 @@ See license text in LICENSE file
 
 // Require modules
 var
-  assert = require("assert"),
-  sys = require("sys"),
-  mysql = require("../deps/Sannis-node-mysql-libmysqlclient/mysql-libmysqlclient"),
+  assert = require('assert'),
+  sys = require('sys'),
+  mysql = require('../deps/Sannis-node-mysql-libmysqlclient/mysql-libmysqlclient'),
   conn = mysql.createConnectionSync(),
   global_start_time,
   global_total_time;
