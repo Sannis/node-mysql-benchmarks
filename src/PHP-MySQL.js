@@ -6,15 +6,30 @@ See license text in LICENSE file
 
 // Require modules
 var
-  sys = require("sys"),
+  sys = require('sys'),
   spawn = require('child_process').spawn,
   global_start_time,
   global_total_time;
 
 exports.run = function (callback, cfg) {
+  var
+    php_child,
+    args = [],
+    i;
+
+  for (i in cfg) {
+    args.push('--' + i);
+
+    if (typeof cfg[i] === 'boolean') {
+      args.push(cfg[i] ? '1' : '0');
+    } else if (typeof cfg[i] !== 'object') {
+      args.push(cfg[i]);
+    }
+  }
+
   global_start_time = new Date();
-  
-  var php_child = spawn('./src/benchmark.php');
+
+  php_child = spawn('./src/benchmark.php', args);
 
   php_child.stdout.on('data', function (data) {
     sys.print(data);
@@ -22,8 +37,9 @@ exports.run = function (callback, cfg) {
 
   php_child.stderr.on('data', function (data) {
     if (/^execvp\(\)/.test(data.asciiSlice(0, data.length))) {
-      sys.puts('Failed to start child process for PHP benchmark.');
+      sys.puts("Failed to start child process for PHP benchmark.");
     }
+    //sys.print('stderr: ' + data);
   });
 
   php_child.on('exit', function (code) {
