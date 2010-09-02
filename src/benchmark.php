@@ -12,7 +12,7 @@ See license text in LICENSE file
 
 $host = "localhost";
 $user = "test";
-$password = "1234";
+$password = "";
 $database = "test";
 $test_table = "test_table";
 

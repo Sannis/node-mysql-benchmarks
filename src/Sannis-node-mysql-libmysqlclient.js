@@ -12,7 +12,7 @@ var
   assert = require("assert"),
   sys = require("sys"),
   mysql = require("../deps/Sannis-node-mysql-libmysqlclient/mysql-libmysqlclient"),
-  conn = mysql.createConnection(),
+  conn = mysql.createConnectionSync(),
   global_start_time,
   global_total_time;
 
@@ -20,12 +20,14 @@ function selectSyncBenchmark(callback) {
   var
     start_time,
     total_time,
-    factor = cfg.do_not_run_sync_if_async_exists ? 1 : 2;
+    factor = cfg.do_not_run_sync_if_async_exists ? 1 : 2,
+    res,
+    rows;
 
   start_time = new Date();
   
-  var res = conn.query("SELECT * FROM " + cfg.test_table + ";");
-  var rows = res.fetchAll();
+  res = conn.querySync("SELECT * FROM " + cfg.test_table + ";");
+  rows = res.fetchAllSync();
   
   total_time = ((new Date()) - start_time) / 1000;
   sys.puts("**** " + (factor * cfg.insert_rows_count) + " rows sync selected in " + total_time + "s (" + Math.round(factor * cfg.insert_rows_count / total_time) + "/s)");
@@ -41,7 +43,7 @@ function selectSyncBenchmark(callback) {
   global_total_time = ((new Date()) - global_start_time - cfg.delay_before_select) / 1000;
   sys.puts("** Total time is " + global_total_time + "s");
   
-  conn.close();
+  conn.closeSync();
   
   callback.apply();
 }
@@ -53,11 +55,11 @@ function insertAsyncBenchmark(callback) {
     i = 0;
   
   start_time = new Date();
-
+  
   function insertAsync() {
     i += 1;
     if (i <= cfg.insert_rows_count) {
-      conn.queryAsync(cfg.insert_query, function (res) {
+      conn.query(cfg.insert_query, function (res) {
         insertAsync();
       });
     } else {
@@ -69,7 +71,7 @@ function insertAsyncBenchmark(callback) {
       }, cfg.delay_before_select);
     }
   }
-
+  
   insertAsync();
 }
 
@@ -81,9 +83,9 @@ function insertSyncBenchmark(callback) {
     res;
   
   start_time = new Date();
-
+  
   for (i = 0; i < cfg.insert_rows_count; i += 1) {
-    res = conn.query(cfg.insert_query);
+    res = conn.querySync(cfg.insert_query);
   }
   
   total_time = ((new Date()) - start_time) / 1000;
@@ -101,8 +103,8 @@ function reconnectSyncBenchmark(callback) {
   start_time = new Date();
   
   for (i = 0; i < cfg.reconnect_count; i += 1) {
-    conn.close();
-    conn.connect(cfg.host, cfg.user, cfg.password, cfg.database);
+    conn.closeSync();
+    conn.connectSync(cfg.host, cfg.user, cfg.password, cfg.database);
   }
   
   total_time = ((new Date()) - start_time) / 1000;
@@ -125,7 +127,7 @@ function escapeBenchmark(callback) {
   start_time = new Date();
   
   for (i = 0; i < cfg.escape_count; i += 1) {
-    escaped_string = conn.escape(cfg.string_to_escape);
+    escaped_string = conn.escapeSync(cfg.string_to_escape);
   }
   
   total_time = ((new Date()) - start_time) / 1000;
@@ -142,10 +144,10 @@ function startBenchmark(callback) {
   
   start_time = new Date();
   
-  conn.connect(cfg.host, cfg.user, cfg.password, cfg.database);
+  conn.connectSync(cfg.host, cfg.user, cfg.password, cfg.database);
   
-  if (!conn.connected()) {
-    sys.puts("\033[31m** Connection error: " + conn.connectErrno() + ", " + conn.connectError() + "\033[39m");
+  if (!conn.connectedSync()) {
+    sys.puts("\033[31m** Connection error: " + conn.connectErrnoSync() + ", " + conn.connectErrorSync() + "\033[39m");
     
     // Finish benchmark
     global_total_time = ((new Date()) - global_start_time - cfg.delay_before_select) / 1000;
@@ -155,9 +157,9 @@ function startBenchmark(callback) {
     return;
   }
 
-  res = conn.query("DROP TABLE IF EXISTS " + cfg.test_table + ";");
-  res = conn.query("SET max_heap_table_size=128M;");
-  res = conn.query(cfg.create_table_query);
+  res = conn.querySync("DROP TABLE IF EXISTS " + cfg.test_table + ";");
+  res = conn.querySync("SET max_heap_table_size=128M;");
+  res = conn.querySync(cfg.create_table_query);
   
   total_time = ((new Date()) - start_time) / 1000;
   sys.puts("**** Benchmark initialization time is " + total_time + "s");

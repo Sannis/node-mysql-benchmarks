@@ -7,7 +7,7 @@ See license text in LICENSE file
 /*
 > mysql -u root
 CREATE DATABASE test DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci;
-GRANT ALL ON test.* TO test@localhost IDENTIFIED BY "1234";
+GRANT ALL ON test.* TO test@localhost IDENTIFIED BY "";
 */
 
 // Change only this variable to modify benchmark time
@@ -17,7 +17,7 @@ var cfg = {
   // Database connection settings
   host: "localhost",
   user: "test",
-  password: "1234",
+  password: "",
   database: "test",
   test_table: "test_table",
   
