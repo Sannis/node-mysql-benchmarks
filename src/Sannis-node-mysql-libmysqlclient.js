@@ -4,9 +4,6 @@ Copyright (C) 2010, Oleg Efimov <efimovov@gmail.com>
 See license text in LICENSE file
 */
 
-// Load configuration
-var cfg = require("./config").cfg;
-
 // Require modules
 var
   assert = require("assert"),
@@ -16,7 +13,7 @@ var
   global_start_time,
   global_total_time;
 
-function selectSyncBenchmark(callback) {
+function selectSyncBenchmark(callback, cfg) {
   var
     start_time,
     total_time,
@@ -48,7 +45,7 @@ function selectSyncBenchmark(callback) {
   callback.apply();
 }
 
-function insertAsyncBenchmark(callback) {
+function insertAsyncBenchmark(callback, cfg) {
   var
     start_time,
     total_time,
@@ -67,7 +64,7 @@ function insertAsyncBenchmark(callback) {
       sys.puts("**** " + cfg.insert_rows_count + " async insertions in " + total_time + "s (" + Math.round(cfg.insert_rows_count / total_time) + "/s)");
       
       setTimeout(function () {
-        selectSyncBenchmark(callback);
+        selectSyncBenchmark(callback, cfg);
       }, cfg.delay_before_select);
     }
   }
@@ -75,7 +72,7 @@ function insertAsyncBenchmark(callback) {
   insertAsync();
 }
 
-function insertSyncBenchmark(callback) {
+function insertSyncBenchmark(callback, cfg) {
   var
     start_time,
     total_time,
@@ -91,10 +88,10 @@ function insertSyncBenchmark(callback) {
   total_time = ((new Date()) - start_time) / 1000;
   sys.puts("**** " + cfg.insert_rows_count + " sync insertions in " + total_time + "s (" + Math.round(cfg.insert_rows_count / total_time) + "/s)");
   
-  insertAsyncBenchmark(callback);
+  insertAsyncBenchmark(callback, cfg);
 }
 
-function reconnectSyncBenchmark(callback) {
+function reconnectSyncBenchmark(callback, cfg) {
   var
     start_time,
     total_time,
@@ -111,13 +108,13 @@ function reconnectSyncBenchmark(callback) {
   sys.puts("**** " + cfg.reconnect_count + " sync reconnects in " + total_time + "s (" + Math.round(cfg.reconnect_count / total_time) + "/s)");
   
   if (cfg.do_not_run_sync_if_async_exists) {
-    insertAsyncBenchmark(callback);
+    insertAsyncBenchmark(callback, cfg);
   } else {
-    insertSyncBenchmark(callback);
+    insertSyncBenchmark(callback, cfg);
   }
 }
 
-function escapeBenchmark(callback) {
+function escapeBenchmark(callback, cfg) {
   var
     start_time,
     total_time,
@@ -133,10 +130,10 @@ function escapeBenchmark(callback) {
   total_time = ((new Date()) - start_time) / 1000;
   sys.puts("**** " + cfg.escape_count + " escapes in " + total_time + "s (" + Math.round(cfg.escape_count / total_time) + "/s)");
   
-  reconnectSyncBenchmark(callback);
+  reconnectSyncBenchmark(callback, cfg);
 }
 
-function startBenchmark(callback) {
+function startBenchmark(callback, cfg) {
   var
     start_time,
     total_time,
@@ -164,12 +161,12 @@ function startBenchmark(callback) {
   total_time = ((new Date()) - start_time) / 1000;
   sys.puts("**** Benchmark initialization time is " + total_time + "s");
   
-  escapeBenchmark(callback);
+  escapeBenchmark(callback, cfg);
 }
 
-exports.run = function (callback) {
+exports.run = function (callback, cfg) {
   global_start_time = new Date();
   
-  startBenchmark(callback);
+  startBenchmark(callback, cfg);
 };
 
