@@ -16,9 +16,9 @@ $password = "";
 $database = "test";
 $test_table = "test_table";
 
-$escapes_count = 1000000;
-$reconnects_count = 10000;
-$inserts_count = 100000;
+$escapes_count = 10000;
+$reconnects_count = 100;
+$inserts_count = 1000;
 
 $delay_before_select = 1*1000;
 
@@ -30,7 +30,7 @@ $conn;
 // Utility function
 //
 
-function do_benchmark($execute_function, $title, $count)
+function do_benchmark($execute_function, $title, $count = 0)
 {
     $start = microtime(true);
     call_user_func($execute_function);
@@ -55,15 +55,15 @@ function do_benchmark_select()
     
     $rows = array();
     
-    mysql_query("SELECT * FROM ".$test_table.";", $conn);
+    $r = mysql_query("SELECT * FROM ".$test_table.";", $conn);
     
-    while($row = mysql_fetch_array())
+    while($row = mysql_fetch_array($r))
     {
         $rows[] = $row;
     }
 }
 
-function do_benchmark_inserts($rows)
+function do_benchmark_inserts()
 {
     global $conn, $test_table, $inserts_count;
     
