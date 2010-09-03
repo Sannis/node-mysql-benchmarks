@@ -155,7 +155,6 @@ function startBenchmark(callback, cfg) {
   }
 
   res = conn.querySync("DROP TABLE IF EXISTS " + cfg.test_table + ";");
-  res = conn.querySync("SET max_heap_table_size=128M;");
   res = conn.querySync(cfg.create_table_query);
   
   total_time = ((new Date()) - start_time) / 1000;

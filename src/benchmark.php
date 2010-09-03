@@ -113,7 +113,6 @@ function do_benchmark_initialization()
     mysql_select_db($cfg['database'], $conn);
     
     mysql_query("DROP TABLE IF EXISTS ".$cfg['test_table'].";");
-    mysql_query("SET max_heap_table_size=128M;");
     mysql_query("CREATE TABLE ".$cfg['test_table'].
                 " (alpha INTEGER, beta VARCHAR(128), pi FLOAT) ".
                 "TYPE=MEMORY;");

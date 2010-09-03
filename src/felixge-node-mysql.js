@@ -128,13 +128,11 @@ function startBenchmark(callback, cfg) {
 
   conn.connect(function (err, result) {
     conn.query("DROP TABLE IF EXISTS " + cfg.test_table + ";", function () {
-      conn.query("SET max_heap_table_size=128M;", function () {
-        conn.query(cfg.create_table_query, function () {
-          total_time = ((new Date()) - start_time) / 1000;
-          sys.puts("**** Benchmark initialization time is " + total_time + "s");
-          
-          escapeBenchmark(callback, cfg);
-        });
+      conn.query(cfg.create_table_query, function () {
+        total_time = ((new Date()) - start_time) / 1000;
+        sys.puts("**** Benchmark initialization time is " + total_time + "s");
+        
+        escapeBenchmark(callback, cfg);
       });
     });
   });
