@@ -7,3 +7,6 @@
 [submodule "deps/stevebest-node-mysql"]
 	path = deps/stevebest-node-mysql
 	url = git://github.com/stevebest/node-mysql.git
+[submodule "deps/sidorares-nodejs-mysql-native"]
+	path = deps/sidorares-nodejs-mysql-native
+	url = git://github.com/sidorares/nodejs-mysql-native.git
