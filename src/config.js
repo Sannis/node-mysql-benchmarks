@@ -31,7 +31,7 @@ exports.getConfig = function (factor) {
     delay_before_select: 1*1000,
 
     // Run sync functions if async exists?
-    do_not_run_sync_if_async_exists: false
+    do_not_run_sync_if_async_exists: true
   };
 
   cfg.create_table_query = "CREATE TABLE " + cfg.test_table +

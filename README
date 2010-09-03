@@ -12,9 +12,10 @@ Tested with Node version v0.2.0
 
 == Supported MySQL bindings
 
-http://github.com/Sannis/node-mysql-libmysqlclient
-http://github.com/felixge/node-mysql
-http://github.com/stevebest/node-mysql
+[+] http://github.com/Sannis/node-mysql-libmysqlclient
+[+] http://github.com/felixge/node-mysql
+[+] http://github.com/sidorares/nodejs-mysql-native
+[-] http://github.com/stevebest/node-mysql
 
 == Node.js
 
@@ -31,7 +32,7 @@ You can find other information at
 http://github.com/Sannis/node-mysql-bindings-benchmarks/wiki/Contributing
 
 == License & Contributors
- 
+
 MIT License. See license text in file LICENSE.
 
 * Oleg Efimov

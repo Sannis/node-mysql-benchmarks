@@ -6,8 +6,7 @@ See license text in LICENSE file
 */
 
 var
-  bindings_list = ['Sannis-node-mysql-libmysqlclient', 'felixge-node-mysql', /*'stevebest-node-mysql',*/ 'PHP-MySQL'],
-  //bindings_list = ['sidorares-nodejs-mysql-native'],
+  bindings_list = ['Sannis-node-mysql-libmysqlclient', 'felixge-node-mysql', /*'stevebest-node-mysql',*/ 'sidorares-nodejs-mysql-native', 'PHP-MySQL'],
   sys = require('sys'),
   default_factor = 1,
   factor = default_factor,
