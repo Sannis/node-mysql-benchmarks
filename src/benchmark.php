@@ -76,7 +76,7 @@ function do_benchmark_inserts()
     
     for( $i = 0; $i < $cfg['insert_rows_count']; $i++ )
     {
-        mysql_query("INSERT INTO ".$cfg['test_table']." VALUES (1, 'hello', 3.141);", $conn);
+        mysql_query($cfg['insert_query'], $conn);
     }
 }
 
@@ -113,9 +113,7 @@ function do_benchmark_initialization()
     mysql_select_db($cfg['database'], $conn);
     
     mysql_query("DROP TABLE IF EXISTS ".$cfg['test_table'].";");
-    mysql_query("CREATE TABLE ".$cfg['test_table'].
-                " (alpha INTEGER, beta VARCHAR(128), pi FLOAT) ".
-                "TYPE=MEMORY;");
+    mysql_query($cfg['create_table_query']);
 }
 
 // Initialize connection and database
