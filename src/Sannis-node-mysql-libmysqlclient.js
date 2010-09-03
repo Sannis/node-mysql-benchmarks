@@ -6,10 +6,9 @@ See license text in LICENSE file
 
 // Require modules
 var
-  assert = require('assert'),
   sys = require('sys'),
   mysql = require('../deps/Sannis-node-mysql-libmysqlclient/mysql-libmysqlclient'),
-  conn = mysql.createConnectionSync(),
+  conn,
   global_start_time,
   global_total_time;
 
@@ -28,13 +27,6 @@ function selectSyncBenchmark(callback, cfg) {
   
   total_time = ((new Date()) - start_time) / 1000;
   sys.puts("**** " + (factor * cfg.insert_rows_count) + " rows sync selected in " + total_time + "s (" + Math.round(factor * cfg.insert_rows_count / total_time) + "/s)");
-  
-  // Some tests
-  if (rows.length !== factor * cfg.insert_rows_count) {
-    sys.puts("\033[31m**** " + (factor * cfg.insert_rows_count) + " rows inserted" +
-             ", but only " + rows.length + " rows selected\033[39m");
-  }
-  assert.deepEqual(rows[0], cfg.selected_row_example);
   
   // Finish benchmark
   global_total_time = ((new Date()) - global_start_time - cfg.delay_before_select) / 1000;
@@ -136,26 +128,15 @@ function escapeBenchmark(callback, cfg) {
 function startBenchmark(callback, cfg) {
   var
     start_time,
-    total_time,
-    res;
+    total_time;
   
   start_time = new Date();
   
+  conn = mysql.createConnectionSync();
   conn.connectSync(cfg.host, cfg.user, cfg.password, cfg.database);
   
-  if (!conn.connectedSync()) {
-    sys.puts("\033[31m** Connection error: " + conn.connectErrnoSync() + ", " + conn.connectErrorSync() + "\033[39m");
-    
-    // Finish benchmark
-    global_total_time = ((new Date()) - global_start_time - cfg.delay_before_select) / 1000;
-    sys.puts("\033[31m** Total time is " + global_total_time + "s\033[39m");
-  
-    callback.apply();
-    return;
-  }
-
-  res = conn.querySync("DROP TABLE IF EXISTS " + cfg.test_table + ";");
-  res = conn.querySync(cfg.create_table_query);
+  conn.querySync("DROP TABLE IF EXISTS " + cfg.test_table + ";");
+  conn.querySync(cfg.create_table_query);
   
   total_time = ((new Date()) - start_time) / 1000;
   sys.puts("**** Benchmark initialization time is " + total_time + "s");
