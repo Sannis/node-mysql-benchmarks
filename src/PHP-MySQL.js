@@ -16,12 +16,14 @@ exports.run = function (callback, cfg) {
     i;
   
   for (i in cfg) {
-    args.push('--' + i);
-    
-    if (typeof cfg[i] === 'boolean') {
-      args.push(cfg[i] ? '1' : '0');
-    } else if (typeof cfg[i] !== 'object') {
-      args.push(cfg[i]);
+    if (cfg.hasOwnProperty(i)) {
+      args.push('--' + i);
+      
+      if (typeof cfg[i] === 'boolean') {
+        args.push(cfg[i] ? '1' : '0');
+      } else if (typeof cfg[i] !== 'object') {
+        args.push(cfg[i]);
+      }
     }
   }
   

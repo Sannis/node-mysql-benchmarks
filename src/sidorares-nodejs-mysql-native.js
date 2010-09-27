@@ -26,7 +26,7 @@ function selectAsyncBenchmark(callback, cfg) {
     
     // Finish benchmark
     conn.close();
-    callback.apply()
+    callback.apply();
   });
 }
 
@@ -69,9 +69,9 @@ function reconnectAsyncBenchmark(callback, cfg) {
     i += 1;
     if (i <= cfg.reconnect_count) {
       conn.close().on('end', function () {
-      sys.debug("Close " + i);
-        conn.auth(cfg.database, cfg.user, cfg.password).on('end', function(s) {
-        sys.debug("Auth " + i);
+        sys.debug("Close " + i);
+        conn.auth(cfg.database, cfg.user, cfg.password).on('end', function (s) {
+          sys.debug("Auth " + i);
           reconnectAsync();
         });
       });
@@ -80,7 +80,7 @@ function reconnectAsyncBenchmark(callback, cfg) {
       total_time = ((new Date()) - start_time) / 1000;
       sys.puts("**** " + cfg.reconnect_count + " async reconnects in " + total_time + "s (" + Math.round(cfg.reconnect_count / total_time) + "/s)");
       
-      insertSyncBenchmark(callback, cfg);
+      insertAsyncBenchmark(callback, cfg);
     }
   }
   
@@ -96,9 +96,9 @@ function startBenchmark(callback, cfg) {
   
   conn = mysql.createTCPClient(cfg.host);
   
-  conn.auth(cfg.database, cfg.user, cfg.password).on('end', function(s) {
-    conn.query("DROP TABLE IF EXISTS " + cfg.test_table + ";").on('end', function() {
-      conn.query(cfg.create_table_query).on('end', function() {
+  conn.auth(cfg.database, cfg.user, cfg.password).on('end', function (s) {
+    conn.query("DROP TABLE IF EXISTS " + cfg.test_table + ";").on('end', function () {
+      conn.query(cfg.create_table_query).on('end', function () {
         total_time = ((new Date()) - start_time) / 1000;
         sys.puts("**** Benchmark initialization time is " + total_time + "s");
         

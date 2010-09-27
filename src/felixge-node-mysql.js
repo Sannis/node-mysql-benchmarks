@@ -7,7 +7,7 @@ See license text in LICENSE file
 // Require modules
 var
   sys = require('sys'),
-  mysql = require('../deps/felixge-node-mysql/lib/mysql').Client,
+  Mysql = require('../deps/felixge-node-mysql/lib/mysql').Client,
   conn,
   rows;
 
@@ -24,7 +24,7 @@ function selectAsyncBenchmark(callback, cfg) {
     
     // Finish benchmark
     conn.end();
-    callback.apply()
+    callback.apply();
   });
 }
 
@@ -107,7 +107,7 @@ function startBenchmark(callback, cfg) {
   
   start_time = new Date();
   
-  conn = new mysql();
+  conn = new Mysql();
   
   conn.host     = cfg.host;
   conn.user     = cfg.user;

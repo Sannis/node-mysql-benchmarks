@@ -23,7 +23,7 @@ function selectAsyncBenchmark(callback, cfg) {
     
     // Finish benchmark
     conn.close();
-    callback.apply()
+    callback.apply();
   });
 }
 
