@@ -93,10 +93,12 @@ void do_benchmark_reconnect(int count) {
 void do_benchmark_escape_string(int count) {
     int i = 0;
     char *escaped_string;
+    const char *string_to_escape = cfg["string_to_escape"].c_str();
+    const int string_to_escape_len = cfg["string_to_escape"].length();
 
     for (i = 0; i < count; i++) {
-        escaped_string = new char[2*cfg["string_to_escape"].length() + 1];
-        mysql_real_escape_string(conn, escaped_string, cfg["string_to_escape"].c_str(), cfg["string_to_escape"].length());
+        escaped_string = new char[2*string_to_escape_len + 1];
+        mysql_real_escape_string(conn, escaped_string, string_to_escape, string_to_escape_len);
         delete[] escaped_string;
     }
 }
