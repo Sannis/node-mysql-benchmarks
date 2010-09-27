@@ -7,9 +7,7 @@ See license text in LICENSE file
 // Require modules
 var
   sys = require('sys'),
-  spawn = require('child_process').spawn,
-  global_start_time,
-  global_total_time;
+  spawn = require('child_process').spawn;
 
 exports.run = function (callback, cfg) {
   var
@@ -27,8 +25,6 @@ exports.run = function (callback, cfg) {
     }
   }
   
-  global_start_time = new Date();
-  
   cpp_child = spawn('./build/default/benchmark', args);
   
   cpp_child.stdout.on('data', function (data) {
@@ -44,9 +40,6 @@ exports.run = function (callback, cfg) {
   
   cpp_child.on('exit', function (code) {
     // Finish benchmark
-    global_total_time = ((new Date()) - global_start_time - cfg.delay_before_select) / 1000;
-    sys.puts("** Total time is " + global_total_time + "s");
-    
     callback.apply();
   });
 };

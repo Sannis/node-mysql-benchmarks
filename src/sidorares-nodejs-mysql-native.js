@@ -8,9 +8,7 @@ See license text in LICENSE file
 var
   sys = require('sys'),
   mysql = require('../deps/sidorares-nodejs-mysql-native/lib/mysql-native'),
-  conn,
-  global_start_time,
-  global_total_time;
+  conn;
 
 function selectAsyncBenchmark(callback, cfg) {
   var
@@ -27,11 +25,7 @@ function selectAsyncBenchmark(callback, cfg) {
     sys.puts("**** " + cfg.insert_rows_count + " rows async selected in " + total_time + "s (" + Math.round(cfg.insert_rows_count / total_time) + "/s)");
     
     // Finish benchmark
-    global_total_time = ((new Date()) - global_start_time - cfg.delay_before_select) / 1000;
-    sys.puts("** Total time is " + global_total_time + "s");
-    
     conn.close();
-    
     callback.apply()
   });
 }
@@ -116,8 +110,6 @@ function startBenchmark(callback, cfg) {
 }
 
 exports.run = function (callback, cfg) {
-  global_start_time = new Date();
-  
   startBenchmark(callback, cfg);
 };
 

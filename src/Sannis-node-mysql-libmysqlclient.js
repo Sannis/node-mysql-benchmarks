@@ -8,9 +8,7 @@ See license text in LICENSE file
 var
   sys = require('sys'),
   mysql = require('../deps/Sannis-node-mysql-libmysqlclient/mysql-libmysqlclient'),
-  conn,
-  global_start_time,
-  global_total_time;
+  conn;
 
 function selectSyncBenchmark(callback, cfg) {
   var
@@ -29,11 +27,7 @@ function selectSyncBenchmark(callback, cfg) {
   sys.puts("**** " + (factor * cfg.insert_rows_count) + " rows sync selected in " + total_time + "s (" + Math.round(factor * cfg.insert_rows_count / total_time) + "/s)");
   
   // Finish benchmark
-  global_total_time = ((new Date()) - global_start_time - cfg.delay_before_select) / 1000;
-  sys.puts("** Total time is " + global_total_time + "s");
-  
   conn.closeSync();
-  
   callback.apply();
 }
 
@@ -145,8 +139,6 @@ function startBenchmark(callback, cfg) {
 }
 
 exports.run = function (callback, cfg) {
-  global_start_time = new Date();
-  
   startBenchmark(callback, cfg);
 };
 
