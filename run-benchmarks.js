@@ -6,12 +6,13 @@ See license text in LICENSE file
 */
 
 var
-  bindings_list = [ 'Sannis-node-mysql-libmysqlclient'
-                  , 'felixge-node-mysql'
-                  //, 'stevebest-node-mysql'
-                  , 'sidorares-nodejs-mysql-native'
-                  , 'PHP-MySQL'
-                  , 'CPP-MySQL'],
+  bindings_list = ['CPP-MySQL',
+                   'PHP-MySQL',
+                   'Sannis-node-mysql-libmysqlclient',
+                   'felixge-node-mysql',
+                   // 'stevebest-node-mysql',
+                   'sidorares-nodejs-mysql-native'
+                  ],
   sys = require('sys'),
   default_factor = 1,
   factor = default_factor,
@@ -29,15 +30,17 @@ cfg = require("./src/config").getConfig(factor);
 
 function runNextBenchmark() {
   if (bindings_list.length > 0) {
-    var binding_name = bindings_list.shift();
-    sys.puts("\033[1mBenchmarking " + binding_name + ":\033[22m");
+    var
+      binding_name = bindings_list.shift(),
+      benchmark = require("./src/" + binding_name);
     
-    var benchmark = require("./src/" + binding_name);
+    sys.puts("\u001B[1mBenchmarking " + binding_name + ":\u001B[22m");
+    
     benchmark.run(function () {
       runNextBenchmark();
     }, cfg);
   } else {
-    sys.puts("\033[1mAll benchmarks finished\033[22m");
+    sys.puts("\u001B[1mAll benchmarks finished\u001B[22m");
   }
 }
 
