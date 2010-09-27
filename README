@@ -3,7 +3,7 @@ Benchmarks for MySQL bindings for Node.js
 
 GitHub repo: http://github.com/Sannis/node-mysql-bindings-benchmarks
 
-Before execute run-benchmarks.js you should prepare bindings:
+Before execute run-benchmarks.js you should prepare dependencies and build binary bindings:
 
 $ git submodule init
 $ node-waf configure build
@@ -17,6 +17,8 @@ Tested with Node version v0.2.0
 [+] http://github.com/sidorares/nodejs-mysql-native
 [-] http://github.com/stevebest/node-mysql
 
+Also included benchmarks written in PHP and C++.
+
 == Node.js
 
 Node is the evented I/O for V8 javascript.
@@ -28,8 +30,6 @@ Website: http://nodejs.org
 
 To contribute any patches, simply fork this repository using GitHub
 and send a pull request to me (http://github.com/Sannis). Thanks!
-You can find other information at
-http://github.com/Sannis/node-mysql-bindings-benchmarks/wiki/Contributing
 
 == License & Contributors
 
