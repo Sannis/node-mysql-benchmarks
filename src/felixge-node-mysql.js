@@ -98,8 +98,7 @@ function escapeBenchmark(callback, cfg) {
   total_time = ((new Date()) - start_time) / 1000;
   sys.puts("**** " + cfg.escape_count + " escapes in " + total_time + "s (" + Math.round(cfg.escape_count / total_time) + "/s)");
   
-  //reconnectAsyncBenchmark(callback, cfg);
-  insertAsyncBenchmark(callback, cfg);
+  reconnectAsyncBenchmark(callback, cfg);
 }
 
 function startBenchmark(callback, cfg) {
