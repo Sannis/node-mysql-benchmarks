@@ -61,24 +61,25 @@ function reconnectAsyncBenchmark(callback, cfg) {
     total_time,
     i = 0;
   
-  start_time = new Date();
-  
-  function reconnectAsync() {
-    i += 1;
-    if (i <= cfg.reconnect_count) {
-      conn.end();
-      conn.connect(function (err, result) {
-        reconnectAsync();
-      });
-    } else {
-      total_time = ((new Date()) - start_time) / 1000;
-      sys.puts("**** " + cfg.reconnect_count + " async reconnects in " + total_time + "s (" + Math.round(cfg.reconnect_count / total_time) + "/s)");
-      
-      insertAsyncBenchmark(callback, cfg);
+    start_time = new Date();
+    
+    function reconnectAsync() {
+      i += 1;
+      if (i <= cfg.reconnect_count) {
+        conn.end(function () {
+          conn.connect(function (err, result) {
+            reconnectAsync();
+          });
+        });
+      } else {
+        total_time = ((new Date()) - start_time) / 1000;
+        sys.puts("**** " + cfg.reconnect_count + " async reconnects in " + total_time + "s (" + Math.round(cfg.reconnect_count / total_time) + "/s)");
+        
+        insertAsyncBenchmark(callback, cfg);
+      }
     }
-  }
-  
-  reconnectAsync();
+    
+    reconnectAsync();
 }
 
 function escapeBenchmark(callback, cfg) {
@@ -97,7 +98,8 @@ function escapeBenchmark(callback, cfg) {
   total_time = ((new Date()) - start_time) / 1000;
   sys.puts("**** " + cfg.escape_count + " escapes in " + total_time + "s (" + Math.round(cfg.escape_count / total_time) + "/s)");
   
-  reconnectAsyncBenchmark(callback, cfg);
+  //reconnectAsyncBenchmark(callback, cfg);
+  insertAsyncBenchmark(callback, cfg);
 }
 
 function startBenchmark(callback, cfg) {
