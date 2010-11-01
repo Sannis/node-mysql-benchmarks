@@ -10,7 +10,7 @@ var
   mysql = require('../deps/Sannis-node-mysql-libmysqlclient/mysql-libmysqlclient'),
   conn;
 
-/*function fetchAllAsyncBenchmark(callback, cfg) {
+function fetchAllAsyncBenchmark(callback, cfg) {
   var
     start_time,
     total_time,
@@ -23,7 +23,7 @@ var
   res = conn.querySync("SELECT * FROM " + cfg.test_table + ";");
   
   res.fetchAll(function (err, rows) {
-    //res.freeSync();
+    res.freeSync();
     
     total_time = ((new Date()) - start_time) / 1000;
     sys.puts("**** " + (factor * cfg.insert_rows_count) + " rows async (fetchAll) selected in " + total_time + "s (" + Math.round(factor * cfg.insert_rows_count / total_time) + "/s)");
@@ -32,7 +32,7 @@ var
     conn.closeSync();
     callback.apply();
   });
-}*/
+}
 
 function fetchObjectLoopSyncBenchmark(callback, cfg) {
   var
@@ -56,10 +56,7 @@ function fetchObjectLoopSyncBenchmark(callback, cfg) {
   total_time = ((new Date()) - start_time) / 1000;
   sys.puts("**** " + (factor * cfg.insert_rows_count) + " rows sync (fetchObject in loop) selected in " + total_time + "s (" + Math.round(factor * cfg.insert_rows_count / total_time) + "/s)");
   
-  //fetchAllAsyncBenchmark(callback, cfg);
-  // Finish benchmark
-  conn.closeSync();
-  callback.apply();
+  fetchAllAsyncBenchmark(callback, cfg);
 }
 
 function fetchAllSyncBenchmark(callback, cfg) {
