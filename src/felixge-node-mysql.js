@@ -18,7 +18,11 @@ function selectAsyncBenchmark(callback, cfg) {
   
   start_time = new Date();
   
-  conn.query("SELECT * FROM " + cfg.test_table + ";", function (err, results, fields) {
+  conn.query("SELECT * FROM " + cfg.test_table + ";", function (err) {
+    if (err) {
+      console.log(err);
+    }
+    
     total_time = ((new Date()) - start_time) / 1000;
     sys.puts("**** " + cfg.insert_rows_count + " rows async selected in " + total_time + "s (" + Math.round(cfg.insert_rows_count / total_time) + "/s)");
     
@@ -39,7 +43,11 @@ function insertAsyncBenchmark(callback, cfg) {
   function insertAsync() {
     i += 1;
     if (i <= cfg.insert_rows_count) {
-      conn.query(cfg.insert_query, function (err, result) {
+      conn.query(cfg.insert_query, function (err) {
+        if (err) {
+          console.log(err);
+        }
+        
         insertAsync();
       });
     } else {
@@ -67,7 +75,11 @@ function reconnectDestroyAsyncBenchmark(callback, cfg) {
       i += 1;
       if (i <= cfg.reconnect_count) {
         conn.destroy();
-        conn.connect(function (err, result) {
+        conn.connect(function (err) {
+          if (err) {
+            console.log(err);
+          }
+          
           reconnectAsync();
         });
       } else {
@@ -93,7 +105,11 @@ function reconnectEndAsyncBenchmark(callback, cfg) {
       i += 1;
       if (i <= cfg.reconnect_count) {
         conn.end(function () {
-          conn.connect(function (err, result) {
+          conn.connect(function (err) {
+            if (err) {
+              console.log(err);
+            }
+            
             reconnectAsync();
           });
         });
@@ -142,8 +158,20 @@ function startBenchmark(callback, cfg) {
   conn.database = cfg.database;
   
   conn.connect(function (err, result) {
-    conn.query("DROP TABLE IF EXISTS " + cfg.test_table + ";", function () {
-      conn.query(cfg.create_table_query, function () {
+    if (err) {
+      console.log(err);
+    }
+    
+    conn.query("DROP TABLE IF EXISTS " + cfg.test_table + ";", function (err) {
+      if (err) {
+        console.log(err);
+      }
+      
+      conn.query(cfg.create_table_query, function (err) {
+        if (err) {
+          console.log(err);
+        }
+        
         total_time = ((new Date()) - start_time) / 1000;
         sys.puts("**** Benchmark initialization time is " + total_time + "s");
         

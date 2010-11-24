@@ -23,6 +23,10 @@ function fetchAllAsyncBenchmark(callback, cfg) {
   res = conn.querySync("SELECT * FROM " + cfg.test_table + ";");
   
   res.fetchAll(function (err, rows) {
+    if (err) {
+      console.log(err);
+    }
+    
     res.freeSync();
     
     total_time = ((new Date()) - start_time) / 1000;
@@ -92,7 +96,11 @@ function insertAsyncBenchmark(callback, cfg) {
   function insertAsync() {
     i += 1;
     if (i <= cfg.insert_rows_count) {
-      conn.query(cfg.insert_query, function (res) {
+      conn.query(cfg.insert_query, function (err) {
+        if (err) {
+          console.log(err);
+        }
+        
         insertAsync();
       });
     } else {
@@ -139,7 +147,11 @@ function reconnectHalfAsyncBenchmark(callback, cfg) {
       i += 1;
       if (i <= cfg.reconnect_count) {
         conn.closeSync();
-        conn.connect(cfg.host, cfg.user, cfg.password, cfg.database, function (err, result) {
+        conn.connect(cfg.host, cfg.user, cfg.password, cfg.database, function (err) {
+          if (err) {
+            console.log(err);
+          }
+          
           reconnectAsync();
         });
       } else {
