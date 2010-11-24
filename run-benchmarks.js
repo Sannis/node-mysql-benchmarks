@@ -16,7 +16,8 @@ var
   sys = require('sys'),
   default_factor = 1,
   factor = default_factor,
-  cfg;
+  cfg,
+  binding_filter;
 
 if (process.argv[2] !== undefined) {
   factor = Math.abs(process.argv[2]);
@@ -24,6 +25,10 @@ if (process.argv[2] !== undefined) {
   if (isNaN(factor)) {
     factor = default_factor;
   }
+}
+
+if (process.argv[3] !== undefined) {
+  binding_filter = process.argv[3];
 }
 
 cfg = require("./src/config").getConfig(factor);
@@ -34,11 +39,17 @@ function runNextBenchmark() {
       binding_name = bindings_list.shift(),
       benchmark = require("./src/" + binding_name);
     
-    sys.puts("\u001B[1mBenchmarking " + binding_name + ":\u001B[22m");
-    
-    benchmark.run(function () {
+    if (!binding_filter || (binding_name.match(binding_filter))) {
+      sys.puts("\u001B[1mBenchmarking " + binding_name + ":\u001B[22m");
+      
+      benchmark.run(function () {
+        runNextBenchmark();
+      }, cfg);
+    } else {
+      sys.puts("\u001B[1mSkipping " + binding_name + "...\u001B[22m");
+      
       runNextBenchmark();
-    }, cfg);
+    }
   } else {
     sys.puts("\u001B[1mAll benchmarks finished\u001B[22m");
   }
