@@ -3,12 +3,13 @@ Benchmarks for MySQL bindings for Node.js
 
 GitHub repo: http://github.com/Sannis/node-mysql-bindings-benchmarks
 
-Before execute run-benchmarks.js you should prepare dependencies and build binary bindings:
+Before execute run-benchmarks.js you should prepare dependencies
+and build binary bindings:
 
 $ git submodule init
 $ node-waf configure build
 
-Tested with Node version v0.2.0
+Tested with Node version v0.2.5
 
 == Supported MySQL bindings
 
@@ -18,6 +19,11 @@ Tested with Node version v0.2.0
 [-] http://github.com/stevebest/node-mysql
 
 Also included benchmarks written in PHP and C++.
+
+== Benchmark results
+
+Some of my (Sannis') benchmark results:
+<https://github.com/Sannis/node-mysql-bindings-benchmarks/wiki>.
 
 == Node.js
 
@@ -34,6 +40,9 @@ and send a pull request to me (http://github.com/Sannis). Thanks!
 == License & Contributors
 
 MIT License. See license text in file LICENSE.
+
+Bindings licenses you can read in their deps/* dir.
+At this moment all of them are MIT-licensed.
 
 * Oleg Efimov
   E-mail: <efimovov@gmail.com>
