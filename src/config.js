@@ -15,7 +15,7 @@ GRANT ALL ON test.* TO test@localhost IDENTIFIED BY "";
 exports.getConfig = function (factor) {
   var cfg = {
     // Database connection settings
-    host: "localhost",
+    host: "127.0.0.1",
     user: "test",
     password: "",
     database: "test",
