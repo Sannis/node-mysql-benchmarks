@@ -41,6 +41,7 @@ void do_benchmark(void (*f)(int), const char *title, int count = 0) {
     } else {
         printf("%s %.2lfs\n", title, delta);
     }
+    fflush(stdout);
 }
 
 //
