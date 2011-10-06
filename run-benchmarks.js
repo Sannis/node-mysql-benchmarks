@@ -10,8 +10,9 @@ var
                    'PHP-MySQL',
                    'Sannis-node-mysql-libmysqlclient',
                    'felixge-node-mysql',
-                   // 'stevebest-node-mysql',
-                   'sidorares-nodejs-mysql-native'
+                   //'stevebest-node-mysql',
+                   'sidorares-nodejs-mysql-native',
+                   'mariano-node-db-mysql'
                   ],
   sys = require('sys'),
   default_factor = 1,

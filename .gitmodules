@@ -10,3 +10,6 @@
 [submodule "deps/sidorares-nodejs-mysql-native"]
 	path = deps/sidorares-nodejs-mysql-native
 	url = git://github.com/sidorares/nodejs-mysql-native.git
+[submodule "deps/mariano-node-db-mysql"]
+	path = deps/mariano-node-db-mysql
+	url = git://github.com/mariano/node-db-mysql.git

@@ -13,10 +13,11 @@ Tested with Node version v0.2.5
 
 == Supported MySQL bindings
 
-[+] http://github.com/Sannis/node-mysql-libmysqlclient
-[+] http://github.com/felixge/node-mysql
-[+] http://github.com/sidorares/nodejs-mysql-native
-[-] http://github.com/stevebest/node-mysql
+[+] https://github.com/Sannis/node-mysql-libmysqlclient
+[+] https://github.com/felixge/node-mysql
+[-] https://github.com/stevebest/node-mysql
+[+] https://github.com/sidorares/nodejs-mysql-native
+[+] https://github.com/mariano/node-db-mysql
 
 Also included benchmarks written in PHP and C++.
 
