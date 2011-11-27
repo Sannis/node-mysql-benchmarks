@@ -63,28 +63,6 @@ function fetchObjectLoopSyncBenchmark(callback, cfg) {
   fetchAllAsyncBenchmark(callback, cfg);
 }
 
-function fetchAllSyncBenchmark(callback, cfg) {
-  var
-    start_time,
-    total_time,
-    factor = cfg.do_not_run_sync_if_async_exists ? 1 : 2,
-    res,
-    rows;
-  
-  start_time = new Date();
-  
-  res = conn.querySync("SELECT * FROM " + cfg.test_table + ";");
-  
-  rows = res.fetchAllSync();
-  
-  res.freeSync();
-  
-  total_time = ((new Date()) - start_time) / 1000;
-  util.puts("**** " + (factor * cfg.insert_rows_count) + " rows sync (fetchAll) selected in " + total_time + "s (" + Math.round(factor * cfg.insert_rows_count / total_time) + "/s)");
-  
-  fetchObjectLoopSyncBenchmark(callback, cfg);
-}
-
 function insertAsyncBenchmark(callback, cfg) {
   var
     start_time,
@@ -108,7 +86,7 @@ function insertAsyncBenchmark(callback, cfg) {
       util.puts("**** " + cfg.insert_rows_count + " async insertions in " + total_time + "s (" + Math.round(cfg.insert_rows_count / total_time) + "/s)");
       
       setTimeout(function () {
-        fetchAllSyncBenchmark(callback, cfg);
+        fetchObjectLoopSyncBenchmark(callback, cfg);
       }, cfg.delay_before_select);
     }
   }
@@ -135,40 +113,6 @@ function insertSyncBenchmark(callback, cfg) {
   insertAsyncBenchmark(callback, cfg);
 }
 
-function reconnectHalfAsyncBenchmark(callback, cfg) {
-  var
-    start_time,
-    total_time,
-    i = 0;
-  
-    start_time = new Date();
-    
-    function reconnectAsync() {
-      i += 1;
-      if (i <= cfg.reconnect_count) {
-        conn.closeSync();
-        conn.connect(cfg.host, cfg.user, cfg.password, cfg.database, function (err) {
-          if (err) {
-            console.log(err);
-          }
-          
-          reconnectAsync();
-        });
-      } else {
-        total_time = ((new Date()) - start_time) / 1000;
-        util.puts("**** " + cfg.reconnect_count + " half-async reconnects in " + total_time + "s (" + Math.round(cfg.reconnect_count / total_time) + "/s)");
-        
-        if (cfg.do_not_run_sync_if_async_exists) {
-          insertAsyncBenchmark(callback, cfg);
-        } else {
-          insertSyncBenchmark(callback, cfg);
-        }
-      }
-    }
-    
-    reconnectAsync();
-}
-
 function reconnectSyncBenchmark(callback, cfg) {
   var
     start_time,
@@ -185,7 +129,7 @@ function reconnectSyncBenchmark(callback, cfg) {
   total_time = ((new Date()) - start_time) / 1000;
   util.puts("**** " + cfg.reconnect_count + " sync reconnects in " + total_time + "s (" + Math.round(cfg.reconnect_count / total_time) + "/s)");
   
-  reconnectHalfAsyncBenchmark(callback, cfg);
+  insertSyncBenchmark(callback, cfg);
 }
 
 function escapeBenchmark(callback, cfg) {

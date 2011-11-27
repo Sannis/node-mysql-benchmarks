@@ -28,10 +28,7 @@ exports.getConfig = function (factor) {
     insert_rows_count: 100000 * factor,
 
     // Delay before assertion check (ms)
-    delay_before_select: 1 * 1000,
-
-    // Run sync functions if async exists?
-    do_not_run_sync_if_async_exists: true
+    delay_before_select: 1 * 1000
   };
 
   cfg.create_table_query = "CREATE TABLE " + cfg.test_table +
