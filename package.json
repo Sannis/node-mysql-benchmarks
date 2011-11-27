@@ -1,0 +1,34 @@
+{ "name" : "mysql-bindings-benchmarks"
+, "description" : "Node.js MySQL bindings benchmarks"
+, "keywords" : ["mysql", "sql", "database", "benchmark"]
+, "homepage" : "http://sannis.github.com/node-mysql-bindings-benchmarks"
+, "version" : "0.0.0"
+, "author" : "Oleg Efimov <efimovov@gmail.com>"
+, "contributors" :
+  [ { "name": "Oleg Efimov"
+    , "email": "efimovov@gmail.com"
+    }
+  ]
+, "bugs" : { "url" : "http://github.com/Sannis/node-mysql-bindings-benchmarks/issues" }
+, "licenses" : [ { "type" : "MIT" } ]
+, "repository" :
+  { "type" : "git"
+  , "url" : "http://github.com/Sannis/node-mysql-bindings-benchmarks.git"
+  }
+, "bin" :
+  { "node-mysql-bindings-benchmark" : "./bin/node-mysql-bindings-benchmark.js"
+  }
+, "scripts" :
+  { "install" : "make all"
+  }
+, "engines" : { "node" : "0.6.x" }
+, "dependencies" :
+  { "mysql" : "0.9.5"
+  , "mysql-libmysqlclient" : "1.2.9"
+  , "mysql-native" : "0.4.3"
+  , "db-mysql" : "0.7.6"
+  }
+, "devDependencies" :
+  { "nodelint" : "*"
+  }
+}

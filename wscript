@@ -7,24 +7,13 @@ blddir = "build"
 VERSION = "0.0.1"
 
 def set_options(opt):
-  opt.recurse("deps/Sannis-node-mysql-libmysqlclient")
-  
-  opt.recurse("deps/mariano-node-db-mysql")
-  
-  opt.tool_options('compiler_cc')
+  opt.tool_options('compiler_cxx')
   opt.add_option('--mysql-config', action='store', default='mysql_config', help='Path to mysql_config, e.g. /usr/bin/mysql_config')
 
 def configure(conf):
-  print("Configure Sannis/node-mysql-libmysqlclient")
-  conf.recurse("deps/Sannis-node-mysql-libmysqlclient")
-  
-  print("Configure mariano/node-db-mysql")
-  conf.recurse("deps/mariano-node-db-mysql")
-  
-  print("Configure C++ benchmark")
   conf.check_tool('compiler_cxx')
-  conf.env.append_unique('CXXFLAGS', ["-g", "-D_FILE_OFFSET_BITS=64","-D_LARGEFILE_SOURCE", "-Wall"])
-  
+  conf.env.append_unique('CXXFLAGS', ["-Wall"])
+
   conf.env.append_unique('CXXFLAGS', Utils.cmd_output(Options.options.mysql_config + ' --include').split())
   
   if conf.check_cxx(lib="mysqlclient_r", errmsg="not found, try to find nonthreadsafe libmysqlclient"):
@@ -44,25 +33,4 @@ def build(bld):
   obj.target = "benchmark"
   obj.source = "./src/benchmark.cc"
   obj.uselib = "MYSQLCLIENT"
-  
-  print("Build Sannis/node-mysql-libmysqlclient")
-  bld.recurse("deps/Sannis-node-mysql-libmysqlclient")
-  
-  print("Build mariano/node-db-mysql")
-  bld.recurse("deps/mariano-node-db-mysql")
-
-def test(tst):
-  print("Run tests for Sannis/node-mysql-libmysqlclient")
-  tst.recurse("deps/Sannis-node-mysql-libmysqlclient")
-  
-  print("Run tests for mariano/node-db-mysql")
-  tst.recurse("deps/mariano-node-db-mysql")
-
-def load_deps(ctx):
-  Utils.exec_command('git submodule update --init')
-
-def shutdown():
-    t = "mysql_bindings.node"
-    if exists("build/default/deps/Sannis-node-mysql-libmysqlclient/" + t) and not exists("deps/Sannis-node-mysql-libmysqlclient/" + t):
-      symlink("../../build/default/deps/Sannis-node-mysql-libmysqlclient/" + t, "deps/Sannis-node-mysql-libmysqlclient/" + t)
 

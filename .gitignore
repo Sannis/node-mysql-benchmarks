@@ -1,3 +1,7 @@
 .lock-wscript
 build/
 *~
+node_modules
+build-stamp
+dependencies-stamp
+devdependencies-stamp

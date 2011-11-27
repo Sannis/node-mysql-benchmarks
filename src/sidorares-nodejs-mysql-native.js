@@ -6,8 +6,8 @@ See license text in LICENSE file
 
 // Require modules
 var
-  sys = require('sys'),
-  mysql = require('../deps/sidorares-nodejs-mysql-native/lib/mysql-native'),
+  util = require('util'),
+  mysql = require('mysql-native'),
   conn;
 
 function selectAsyncBenchmark(callback, cfg) {
@@ -22,7 +22,7 @@ function selectAsyncBenchmark(callback, cfg) {
     rows.push(row);
   }).on('end', function () {
     total_time = ((new Date()) - start_time) / 1000;
-    sys.puts("**** " + cfg.insert_rows_count + " rows async selected in " + total_time + "s (" + Math.round(cfg.insert_rows_count / total_time) + "/s)");
+    util.puts("**** " + cfg.insert_rows_count + " rows async selected in " + total_time + "s (" + Math.round(cfg.insert_rows_count / total_time) + "/s)");
     
     // Finish benchmark
     conn.close();
@@ -46,7 +46,7 @@ function insertAsyncBenchmark(callback, cfg) {
       });
     } else {
       total_time = ((new Date()) - start_time) / 1000;
-      sys.puts("**** " + cfg.insert_rows_count + " async insertions in " + total_time + "s (" + Math.round(cfg.insert_rows_count / total_time) + "/s)");
+      util.puts("**** " + cfg.insert_rows_count + " async insertions in " + total_time + "s (" + Math.round(cfg.insert_rows_count / total_time) + "/s)");
       
       setTimeout(function () {
         selectAsyncBenchmark(callback, cfg);
@@ -69,16 +69,16 @@ function reconnectAsyncBenchmark(callback, cfg) {
     i += 1;
     if (i <= cfg.reconnect_count) {
       conn.close().on('end', function () {
-        sys.debug("Close " + i);
+        util.debug("Close " + i);
         conn.auth(cfg.database, cfg.user, cfg.password).on('end', function (s) {
-          sys.debug("Auth " + i);
+          util.debug("Auth " + i);
           reconnectAsync();
         });
       });
 
     } else {
       total_time = ((new Date()) - start_time) / 1000;
-      sys.puts("**** " + cfg.reconnect_count + " async reconnects in " + total_time + "s (" + Math.round(cfg.reconnect_count / total_time) + "/s)");
+      util.puts("**** " + cfg.reconnect_count + " async reconnects in " + total_time + "s (" + Math.round(cfg.reconnect_count / total_time) + "/s)");
       
       insertAsyncBenchmark(callback, cfg);
     }
@@ -100,7 +100,7 @@ function startBenchmark(callback, cfg) {
     conn.query("DROP TABLE IF EXISTS " + cfg.test_table + ";").on('end', function () {
       conn.query(cfg.create_table_query).on('end', function () {
         total_time = ((new Date()) - start_time) / 1000;
-        sys.puts("**** Benchmark initialization time is " + total_time + "s");
+        util.puts("**** Benchmark initialization time is " + total_time + "s");
         
         //reconnectAsyncBenchmark(callback, cfg);
         insertAsyncBenchmark(callback, cfg);

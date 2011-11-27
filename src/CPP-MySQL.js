@@ -6,7 +6,7 @@ See license text in LICENSE file
 
 // Require modules
 var
-  sys = require('sys'),
+  util = require('util'),
   spawn = require('child_process').spawn;
 
 exports.run = function (callback, cfg) {
@@ -14,7 +14,7 @@ exports.run = function (callback, cfg) {
     cpp_child,
     args = [],
     i;
-  
+
   for (i in cfg) {
     if (cfg.hasOwnProperty(i)) {
       args.push('--' + i);
@@ -26,20 +26,20 @@ exports.run = function (callback, cfg) {
       }
     }
   }
-  
-  cpp_child = spawn('./build/default/benchmark', args);
-  
+
+  cpp_child = spawn(__dirname + '/../build/Release/benchmark', args);
+
   cpp_child.stdout.on('data', function (data) {
-    sys.print(data);
+    util.print(data);
   });
-  
+
   cpp_child.stderr.on('data', function (data) {
     if (/^execvp\(\)/.test(data.asciiSlice(0, data.length))) {
-      sys.puts("Failed to start child process for C++ benchmark.");
+      util.puts("Failed to start child process for C++ benchmark.");
     }
-    sys.print('stderr: ' + data);
+    util.print('stderr: ' + data);
   });
-  
+
   cpp_child.on('exit', function (code) {
     // Finish benchmark
     callback.apply();

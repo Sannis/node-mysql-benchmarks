@@ -6,8 +6,8 @@ See license text in LICENSE file
 
 // Require modules
 var
-  sys = require('sys'),
-  mysql = require('../deps/Sannis-node-mysql-libmysqlclient/mysql-libmysqlclient'),
+  util = require('util'),
+  mysql = require('mysql-libmysqlclient'),
   conn;
 
 function fetchAllAsyncBenchmark(callback, cfg) {
@@ -30,7 +30,7 @@ function fetchAllAsyncBenchmark(callback, cfg) {
     res.freeSync();
     
     total_time = ((new Date()) - start_time) / 1000;
-    sys.puts("**** " + (factor * cfg.insert_rows_count) + " rows async (fetchAll) selected in " + total_time + "s (" + Math.round(factor * cfg.insert_rows_count / total_time) + "/s)");
+    util.puts("**** " + (factor * cfg.insert_rows_count) + " rows async (fetchAll) selected in " + total_time + "s (" + Math.round(factor * cfg.insert_rows_count / total_time) + "/s)");
     
     // Finish benchmark
     conn.closeSync();
@@ -58,7 +58,7 @@ function fetchObjectLoopSyncBenchmark(callback, cfg) {
   res.freeSync();
   
   total_time = ((new Date()) - start_time) / 1000;
-  sys.puts("**** " + (factor * cfg.insert_rows_count) + " rows sync (fetchObject in loop) selected in " + total_time + "s (" + Math.round(factor * cfg.insert_rows_count / total_time) + "/s)");
+  util.puts("**** " + (factor * cfg.insert_rows_count) + " rows sync (fetchObject in loop) selected in " + total_time + "s (" + Math.round(factor * cfg.insert_rows_count / total_time) + "/s)");
   
   fetchAllAsyncBenchmark(callback, cfg);
 }
@@ -80,7 +80,7 @@ function fetchAllSyncBenchmark(callback, cfg) {
   res.freeSync();
   
   total_time = ((new Date()) - start_time) / 1000;
-  sys.puts("**** " + (factor * cfg.insert_rows_count) + " rows sync (fetchAll) selected in " + total_time + "s (" + Math.round(factor * cfg.insert_rows_count / total_time) + "/s)");
+  util.puts("**** " + (factor * cfg.insert_rows_count) + " rows sync (fetchAll) selected in " + total_time + "s (" + Math.round(factor * cfg.insert_rows_count / total_time) + "/s)");
   
   fetchObjectLoopSyncBenchmark(callback, cfg);
 }
@@ -105,7 +105,7 @@ function insertAsyncBenchmark(callback, cfg) {
       });
     } else {
       total_time = ((new Date()) - start_time) / 1000;
-      sys.puts("**** " + cfg.insert_rows_count + " async insertions in " + total_time + "s (" + Math.round(cfg.insert_rows_count / total_time) + "/s)");
+      util.puts("**** " + cfg.insert_rows_count + " async insertions in " + total_time + "s (" + Math.round(cfg.insert_rows_count / total_time) + "/s)");
       
       setTimeout(function () {
         fetchAllSyncBenchmark(callback, cfg);
@@ -130,7 +130,7 @@ function insertSyncBenchmark(callback, cfg) {
   }
   
   total_time = ((new Date()) - start_time) / 1000;
-  sys.puts("**** " + cfg.insert_rows_count + " sync insertions in " + total_time + "s (" + Math.round(cfg.insert_rows_count / total_time) + "/s)");
+  util.puts("**** " + cfg.insert_rows_count + " sync insertions in " + total_time + "s (" + Math.round(cfg.insert_rows_count / total_time) + "/s)");
   
   insertAsyncBenchmark(callback, cfg);
 }
@@ -156,7 +156,7 @@ function reconnectHalfAsyncBenchmark(callback, cfg) {
         });
       } else {
         total_time = ((new Date()) - start_time) / 1000;
-        sys.puts("**** " + cfg.reconnect_count + " half-async reconnects in " + total_time + "s (" + Math.round(cfg.reconnect_count / total_time) + "/s)");
+        util.puts("**** " + cfg.reconnect_count + " half-async reconnects in " + total_time + "s (" + Math.round(cfg.reconnect_count / total_time) + "/s)");
         
         if (cfg.do_not_run_sync_if_async_exists) {
           insertAsyncBenchmark(callback, cfg);
@@ -183,7 +183,7 @@ function reconnectSyncBenchmark(callback, cfg) {
   }
   
   total_time = ((new Date()) - start_time) / 1000;
-  sys.puts("**** " + cfg.reconnect_count + " sync reconnects in " + total_time + "s (" + Math.round(cfg.reconnect_count / total_time) + "/s)");
+  util.puts("**** " + cfg.reconnect_count + " sync reconnects in " + total_time + "s (" + Math.round(cfg.reconnect_count / total_time) + "/s)");
   
   reconnectHalfAsyncBenchmark(callback, cfg);
 }
@@ -202,7 +202,7 @@ function escapeBenchmark(callback, cfg) {
   }
   
   total_time = ((new Date()) - start_time) / 1000;
-  sys.puts("**** " + cfg.escape_count + " escapes in " + total_time + "s (" + Math.round(cfg.escape_count / total_time) + "/s)");
+  util.puts("**** " + cfg.escape_count + " escapes in " + total_time + "s (" + Math.round(cfg.escape_count / total_time) + "/s)");
   
   reconnectSyncBenchmark(callback, cfg);
 }
@@ -221,7 +221,7 @@ function startBenchmark(callback, cfg) {
   conn.querySync(cfg.create_table_query);
   
   total_time = ((new Date()) - start_time) / 1000;
-  sys.puts("**** Benchmark initialization time is " + total_time + "s");
+  util.puts("**** Benchmark initialization time is " + total_time + "s");
   
   escapeBenchmark(callback, cfg);
 }
