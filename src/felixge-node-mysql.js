@@ -63,67 +63,6 @@ function insertAsyncBenchmark(callback, cfg) {
   insertAsync();
 }
 
-function reconnectDestroyAsyncBenchmark(callback, cfg) {
-  var
-    start_time,
-    total_time,
-    i = 0;
-  
-    start_time = new Date();
-    
-    function reconnectAsync() {
-      i += 1;
-      if (i <= cfg.reconnect_count) {
-        conn.destroy();
-        conn.connect(function (err) {
-          if (err) {
-            console.log(err);
-          }
-          
-          reconnectAsync();
-        });
-      } else {
-        total_time = ((new Date()) - start_time) / 1000;
-        util.puts("**** " + cfg.reconnect_count + " async reconnects with .destroy() in " + total_time + "s (" + Math.round(cfg.reconnect_count / total_time) + "/s)");
-        
-        insertAsyncBenchmark(callback, cfg);
-      }
-    }
-    
-    reconnectAsync();
-}
-
-function reconnectEndAsyncBenchmark(callback, cfg) {
-  var
-    start_time,
-    total_time,
-    i = 0;
-  
-    start_time = new Date();
-    
-    function reconnectAsync() {
-      i += 1;
-      if (i <= cfg.reconnect_count) {
-        conn.end(function () {
-          conn.connect(function (err) {
-            if (err) {
-              console.log(err);
-            }
-            
-            reconnectAsync();
-          });
-        });
-      } else {
-        total_time = ((new Date()) - start_time) / 1000;
-        util.puts("**** " + cfg.reconnect_count + " async reconnects with .end() in " + total_time + "s (" + Math.round(cfg.reconnect_count / total_time) + "/s)");
-        
-        reconnectDestroyAsyncBenchmark(callback, cfg);
-      }
-    }
-    
-    reconnectAsync();
-}
-
 function escapeBenchmark(callback, cfg) {
   var
     start_time,
@@ -140,7 +79,7 @@ function escapeBenchmark(callback, cfg) {
   total_time = ((new Date()) - start_time) / 1000;
   util.puts("**** " + cfg.escape_count + " escapes in " + total_time + "s (" + Math.round(cfg.escape_count / total_time) + "/s)");
   
-  reconnectEndAsyncBenchmark(callback, cfg);
+  insertAsyncBenchmark(callback, cfg);
 }
 
 function startBenchmark(callback, cfg) {
@@ -157,26 +96,20 @@ function startBenchmark(callback, cfg) {
   conn.password = cfg.password;
   conn.database = cfg.database;
   
-  conn.connect(function (err, result) {
+  conn.query("DROP TABLE IF EXISTS " + cfg.test_table + ";", function (err) {
     if (err) {
       console.log(err);
     }
     
-    conn.query("DROP TABLE IF EXISTS " + cfg.test_table + ";", function (err) {
+    conn.query(cfg.create_table_query, function (err) {
       if (err) {
         console.log(err);
       }
       
-      conn.query(cfg.create_table_query, function (err) {
-        if (err) {
-          console.log(err);
-        }
-        
-        total_time = ((new Date()) - start_time) / 1000;
-        util.puts("**** Benchmark initialization time is " + total_time + "s");
-        
-        escapeBenchmark(callback, cfg);
-      });
+      total_time = ((new Date()) - start_time) / 1000;
+      util.puts("**** Benchmark initialization time is " + total_time + "s");
+      
+      escapeBenchmark(callback, cfg);
     });
   });
 }
