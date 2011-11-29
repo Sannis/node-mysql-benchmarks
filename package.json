@@ -2,7 +2,7 @@
 , "description" : "Node.js MySQL bindings benchmarks"
 , "keywords" : ["mysql", "sql", "database", "benchmark"]
 , "homepage" : "http://sannis.github.com/node-mysql-bindings-benchmarks"
-, "version" : "0.0.0"
+, "version" : "0.2.0"
 , "author" : "Oleg Efimov <efimovov@gmail.com>"
 , "contributors" :
   [ { "name": "Oleg Efimov"
