@@ -24,7 +24,11 @@ function selectAsyncBenchmark(callback, cfg) {
     }
     
     total_time = ((new Date()) - start_time) / 1000;
-    util.puts("**** " + cfg.insert_rows_count + " rows async selected in " + total_time + "s (" + Math.round(cfg.insert_rows_count / total_time) + "/s)");
+    util.puts("**** " + cfg.insert_rows_count
+                      + " rows async selected in "
+                      + total_time + "s ("
+                      + Math.round(cfg.insert_rows_count / total_time)
+                      + "/s)");
     
     // Finish benchmark
     conn.end();
@@ -52,7 +56,11 @@ function insertAsyncBenchmark(callback, cfg) {
       });
     } else {
       total_time = ((new Date()) - start_time) / 1000;
-      util.puts("**** " + cfg.insert_rows_count + " async insertions in " + total_time + "s (" + Math.round(cfg.insert_rows_count / total_time) + "/s)");
+      util.puts("**** " + cfg.insert_rows_count
+                        + " async insertions in "
+                        + total_time + "s ("
+                        + Math.round(cfg.insert_rows_count / total_time)
+                        + "/s)");
       
       setTimeout(function () {
         selectAsyncBenchmark(callback, cfg);
@@ -77,7 +85,11 @@ function escapeBenchmark(callback, cfg) {
   }
   
   total_time = ((new Date()) - start_time) / 1000;
-  util.puts("**** " + cfg.escape_count + " escapes in " + total_time + "s (" + Math.round(cfg.escape_count / total_time) + "/s)");
+  util.puts("**** " + cfg.escape_count
+                    + " escapes in "
+                    + total_time + "s ("
+                    + Math.round(cfg.escape_count / total_time)
+                    + "/s)");
   
   insertAsyncBenchmark(callback, cfg);
 }

@@ -20,6 +20,7 @@
   }
 , "scripts" :
   { "install" : "make all"
+  , "test" : "./bin/node-mysql-bindings-benchmark.js"
   }
 , "engines" : { "node" : "0.6.x" }
 , "dependencies" :

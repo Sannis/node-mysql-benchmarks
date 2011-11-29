@@ -3,24 +3,31 @@ Benchmarks for MySQL bindings for Node.js
 
 GitHub repo: http://github.com/Sannis/node-mysql-bindings-benchmarks
 
-Before execute run-benchmarks.js you should prepare dependencies
-and build binary bindings:
+Before execute ./bin/node-mysql-bindings-benchmark.js
+you should prepare dependencies and build binary bindings:
 
-    $> git submodule init
-    $> node-waf configure build
+    $> npm install .
 
-Tested with Node version v0.2.5
+Tested with Node version v0.6.0
+
+You can install this via npm:
+
+    #> npm install -g mysql-bindings-benchmark
+
+And run:
+
+    $> node-mysql-bindings-benchmark
+
 
 Supported MySQL bindings
 ------------------------
 
-* [+] https://github.com/Sannis/node-mysql-libmysqlclient
-* [+] https://github.com/felixge/node-mysql
-* [-] https://github.com/stevebest/node-mysql
-* [+] https://github.com/sidorares/nodejs-mysql-native
-* [+] https://github.com/mariano/node-db-mysql
+* https://github.com/Sannis/node-mysql-libmysqlclient
+* https://github.com/felixge/node-mysql
+* https://github.com/sidorares/nodejs-mysql-native
+* https://github.com/mariano/node-db-mysql
 
-Also included benchmarks written in PHP and C++.
+Also includes benchmarks written in PHP and C++.
 
 Benchmark results
 -----------------
@@ -42,15 +49,11 @@ Contributing
 To contribute any patches, simply fork this repository using GitHub
 and send a pull request to me (http://github.com/Sannis). Thanks!
 
-License & Contributors
-----------------------
+License
+-------
 
 MIT License. See license text in file LICENSE.
 
-Bindings licenses you can read in their deps/* dir.
+Bindings licenses you can read in their repositories.
 At this moment all of them are MIT-licensed.
-
-* **Oleg Efimov** ( [E-mail](mailto:efimovov@gmail.com), [GitHub](https://github.com/Sannis), [site](http://sannis.ru) \)
-
-  [All commits](https://github.com/Sannis/node-mysql-bindings-benchmarks/commits/master?author=Sannis).
 
