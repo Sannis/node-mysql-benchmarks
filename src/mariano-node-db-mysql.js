@@ -14,7 +14,6 @@ function fetchAllAsyncBenchmark(callback, cfg) {
   var
     start_time,
     total_time,
-    factor = cfg.do_not_run_sync_if_async_exists ? 1 : 2,
     res,
     rows;
 
@@ -26,10 +25,10 @@ function fetchAllAsyncBenchmark(callback, cfg) {
     }
 
     total_time = ((new Date()) - start_time) / 1000;
-    util.puts("**** " + (factor * cfg.insert_rows_count)
+    util.puts("**** " + cfg.insert_rows_count
                       + " rows async (fetchAll) selected in "
                       + total_time + "s ("
-                      + Math.round(factor * cfg.insert_rows_count / total_time)
+                      + Math.round(cfg.insert_rows_count / total_time)
                       + "/s)");
 
     // Finish benchmark
