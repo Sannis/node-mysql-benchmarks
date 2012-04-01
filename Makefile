@@ -1,13 +1,15 @@
 #!/bin/sh
 
-all: clean build
+all: build
+
+rebuild: clean-all build
 
 clean:
 		rm -rf ./build
 		rm -f build-stamp
 
-cleanall: clean
-		rm -f devdependencies-stamp
+clean-all: clean
+		rm -f dependencies-stamp devdependencies-stamp
 
 build: build-stamp dependencies
 
@@ -24,6 +26,9 @@ dependencies-stamp:
 lint: devdependencies
 		./node_modules/.bin/nodelint ./bin/*
 
+benchmark: build
+		./bin/node-mysql-bindings-benchmark.js
+
 devdependencies: devdependencies-stamp
 
 devdependencies-stamp:
@@ -31,5 +36,5 @@ devdependencies-stamp:
 		touch devdependencies-stamp
 		npm install --dev .
 
-.PHONY: all clean cleanall build lint
+.PHONY: all rebuild clean clean-all build lint benchmark
 
