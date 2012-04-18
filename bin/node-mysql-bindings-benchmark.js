@@ -12,7 +12,7 @@ var
                    'felixge-node-mysql',
                    'sidorares-nodejs-mysql-native',
                    'mariano-node-db-mysql',
-                   'node-odbc-mysql'
+                   'w1nk-node-odbc-mysql'
                   ],
   util = require('util'),
   default_factor = 1,
