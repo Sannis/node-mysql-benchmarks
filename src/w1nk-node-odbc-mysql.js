@@ -10,7 +10,7 @@ var
   odbc = require('odbc').Database,
   conn;
 
-function fetchAllAsyncBenchmark(callback, cfg) {
+function fetchAllAsyncBenchmark(results, callback, cfg) {
   var
     start_time,
     total_time,
@@ -25,18 +25,15 @@ function fetchAllAsyncBenchmark(callback, cfg) {
     }
 
     total_time = ((new Date()) - start_time) / 1000;
-    util.puts("**** " + result.length 
-                      + " rows async (fetchAll) selected in "
-                      + total_time + "s ("
-                      + Math.round(result.length / total_time)
-                      + "/s)");
+
+    results['selects'] =  Math.round(result.length / total_time);
 
     // Finish benchmark
-    callback.apply();
+    callback(results);
   });
 }
 
-function insertAsyncBenchmark(callback, cfg) {
+function insertAsyncBenchmark(results, callback, cfg) {
   var
     start_time,
     total_time,
@@ -56,14 +53,11 @@ function insertAsyncBenchmark(callback, cfg) {
       });
     } else {
       total_time = ((new Date()) - start_time) / 1000;
-      util.puts("**** " + cfg.insert_rows_count
-                        + " async insertions in "
-                        + total_time + "s ("
-                        + Math.round(cfg.insert_rows_count / total_time)
-                        + "/s)");
+
+      results['inserts'] = Math.round(cfg.insert_rows_count / total_time);
 
       setTimeout(function () {
-        fetchAllAsyncBenchmark(callback, cfg);
+        fetchAllAsyncBenchmark(results, callback, cfg);
       }, cfg.delay_before_select);
     }
   }
@@ -71,22 +65,22 @@ function insertAsyncBenchmark(callback, cfg) {
   insertAsync();
 }
 
-function startBenchmark(callback, cfg) {
+function startBenchmark(results, callback, cfg) {
   var
     start_time,
-    total_time;
+    total_time,
+    options_string;
 
   start_time = new Date();
 
   conn = new odbc();
 
-  conn.open("DRIVER={MySQL};DATABASE=" + cfg.database + ";USER=" + cfg.user + ";PASSWORD=" + cfg.password + ";SERVER=" + cfg.host
-  /*{
-      hostname: cfg.host,
-      user: cfg.user,
-      password: cfg.password,
-      database: cfg.database
-  }*/, function(error) {
+  options_string = "DRIVER={MySQL};DATABASE=" + cfg.database
+                 + ";USER=" + cfg.user
+                 + ";PASSWORD=" + cfg.password
+                 + ";SERVER=" + cfg.host;
+
+  conn.open(options_string, function(error) {
     if (error) {
         return console.log("CONNECTION ERROR: " + error);
     }
@@ -102,15 +96,17 @@ function startBenchmark(callback, cfg) {
         }
 
         total_time = ((new Date()) - start_time) / 1000;
-        util.puts("**** Benchmark initialization time is " + total_time + "s");
 
-        insertAsyncBenchmark(callback, cfg);
+        results['init'] = total_time;
+
+        insertAsyncBenchmark(results, callback, cfg);
       });
     });
   });
 }
 
 exports.run = function (callback, cfg) {
-  startBenchmark(callback, cfg);
-};
+  var results = {};
 
+  startBenchmark(results, callback, cfg);
+};
