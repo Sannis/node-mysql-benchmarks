@@ -19,6 +19,7 @@ Supported MySQL bindings
 * https://github.com/felixge/node-mysql
 * https://github.com/sidorares/nodejs-mysql-native
 * https://github.com/mariano/node-db-mysql
+* https://github.com/w1nk/node-odbc
 
 Also includes benchmarks written in PHP and C++.
 
