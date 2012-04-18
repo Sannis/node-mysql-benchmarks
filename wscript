@@ -19,10 +19,7 @@ def configure(conf):
   if conf.check_cxx(lib="mysqlclient_r", errmsg="not found, try to find nonthreadsafe libmysqlclient"):
     conf.env.append_unique('LINKFLAGS', Utils.cmd_output(Options.options.mysql_config + ' --libs_r').split())
   else:
-    if conf.check_cxx(lib="mysqlclient"):
-      conf.env.append_unique('LINKFLAGS', Utils.cmd_output(Options.options.mysql_config + ' --libs').split())
-    else:
-      conf.fatal("Missing both libmysqlclient_r and libmysqlclient from libmysqlclient-devel or mysql-devel package")
+    conf.fatal("Missing libmysqlclient_r from libmysqlclient-devel or mysql-devel package")
   
   if not conf.check_cxx(header_name='mysql.h'):
     conf.fatal("Missing mysql.h header from libmysqlclient-devel or mysql-devel package")

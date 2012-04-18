@@ -6,16 +6,17 @@ Copyright (C) 2010, Oleg Efimov <efimovov@gmail.com>
 See license text in LICENSE file
 */
 
-$conn;
+$conn = null;
 
 //
 // Parse options
+// A very basic pseudo --options parser
+//
 
 $cfg = array();
 $m = false;
 $next_option_key = false;
 
-// A very basic pseudo --options parser
 foreach ($argv as $option)
 {
     if ($next_option_key)

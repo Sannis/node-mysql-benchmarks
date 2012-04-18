@@ -13,16 +13,17 @@ exports.run = function (callback, cfg) {
   var
     cpp_child,
     args = [],
-    i;
+    key,
+    results = '';
 
-  for (i in cfg) {
-    if (cfg.hasOwnProperty(i)) {
-      args.push('--' + i);
+  for (key in cfg) {
+    if (cfg.hasOwnProperty(key)) {
+      args.push('--' + key);
       
-      if (typeof cfg[i] === 'boolean') {
-        args.push(cfg[i] ? '1' : '0');
-      } else if (typeof cfg[i] !== 'object') {
-        args.push(cfg[i]);
+      if (typeof cfg[key] === 'boolean') {
+        args.push(cfg[key] ? '1' : '0');
+      } else if (typeof cfg[key] !== 'object') {
+        args.push(cfg[key]);
       }
     }
   }
@@ -30,7 +31,7 @@ exports.run = function (callback, cfg) {
   cpp_child = spawn(__dirname + '/../build/Release/benchmark', args);
 
   cpp_child.stdout.on('data', function (data) {
-    util.print(data);
+    results += data;
   });
 
   cpp_child.stderr.on('data', function (data) {
@@ -41,8 +42,12 @@ exports.run = function (callback, cfg) {
   });
 
   cpp_child.on('exit', function (code) {
+    try {
+      results = JSON.parse(results);
+    } catch (e) {}
+    
     // Finish benchmark
-    callback.apply();
+    callback(results);
   });
 };
 

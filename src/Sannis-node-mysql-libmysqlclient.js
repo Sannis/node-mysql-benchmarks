@@ -27,8 +27,6 @@ function fetchAllAsyncBenchmark(results, callback, cfg) {
       console.log(err);
     }
     
-    res.freeSync();
-    
     total_time = ((new Date()) - start_time) / 1000;
     
     results['selects'] = Math.round(cfg.insert_rows_count / total_time);
@@ -65,11 +63,8 @@ function fetchObjectLoopSyncBenchmark(results, callback, cfg) {
   res.freeSync();
   
   total_time = ((new Date()) - start_time) / 1000;
-  util.puts("**** " + (factor * cfg.insert_rows_count)
-                    + " rows sync (fetchObject in loop) selected in "
-                    + total_time + "s ("
-                    + Math.round(factor * cfg.insert_rows_count / total_time)
-                    + "/s)");
+  
+  results['selectsWAT'] = Math.round(cfg.insert_rows_count / total_time);
   
   fetchAllAsyncBenchmark(results, callback, cfg);
 }

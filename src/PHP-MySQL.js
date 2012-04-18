@@ -38,10 +38,13 @@ exports.run = function (callback, cfg) {
     if (/^execvp\(\)/.test(data.asciiSlice(0, data.length))) {
       util.puts("Failed to start child process for PHP benchmark.");
     }
+    util.print('stderr: ' + data);
   });
 
   php_child.on('exit', function (code) {
-    results = JSON.parse(results);
+    try {
+      results = JSON.parse(results);
+    } catch (e) {}
     
     // Finish benchmark
     callback(results);
