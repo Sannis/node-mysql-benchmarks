@@ -10,7 +10,7 @@ var
   mysql = require('mysql-native'),
   conn;
 
-function selectAsyncBenchmark(callback, cfg) {
+function selectAsyncBenchmark(results, callback, cfg) {
   var
     start_time,
     total_time,
@@ -22,19 +22,18 @@ function selectAsyncBenchmark(callback, cfg) {
     rows.push(row);
   }).on('end', function () {
     total_time = ((new Date()) - start_time) / 1000;
-    util.puts("**** " + cfg.insert_rows_count
-                      + " rows async selected in "
-                      + total_time + "s ("
-                      + Math.round(cfg.insert_rows_count / total_time)
-                      + "/s)");
+    
+    results['selects'] = Math.round(cfg.insert_rows_count / total_time);
+    
+    // Close connection
+    conn.close();
     
     // Finish benchmark
-    conn.close();
-    callback.apply();
+    callback(results);
   });
 }
 
-function insertAsyncBenchmark(callback, cfg) {
+function insertAsyncBenchmark(results, callback, cfg) {
   var
     start_time,
     total_time,
@@ -50,14 +49,11 @@ function insertAsyncBenchmark(callback, cfg) {
       });
     } else {
       total_time = ((new Date()) - start_time) / 1000;
-      util.puts("**** " + cfg.insert_rows_count
-                        + " async insertions in "
-                        + total_time + "s ("
-                        + Math.round(cfg.insert_rows_count / total_time)
-                        + "/s)");
+      
+      results['inserts'] = Math.round(cfg.insert_rows_count / total_time);
       
       setTimeout(function () {
-        selectAsyncBenchmark(callback, cfg);
+        selectAsyncBenchmark(results, callback, cfg);
       }, cfg.delay_before_select);
     }
   }
@@ -65,7 +61,7 @@ function insertAsyncBenchmark(callback, cfg) {
   insertAsync();
 }
 
-function reconnectAsyncBenchmark(callback, cfg) {
+function reconnectAsyncBenchmark(results, callback, cfg) {
   var
     start_time,
     total_time,
@@ -86,20 +82,17 @@ function reconnectAsyncBenchmark(callback, cfg) {
 
     } else {
       total_time = ((new Date()) - start_time) / 1000;
-      util.puts("**** " + cfg.reconnect_count
-                        + " async reconnects in "
-                        + total_time + "s ("
-                        + Math.round(cfg.reconnect_count / total_time)
-                        + "/s)");
       
-      insertAsyncBenchmark(callback, cfg);
+      results['reconnects'] = Math.round(cfg.reconnect_count / total_time);
+      
+      insertAsyncBenchmark(results, callback, cfg);
     }
   }
   
   reconnectAsync();
 }
 
-function startBenchmark(callback, cfg) {
+function startBenchmark(results, callback, cfg) {
   var
     start_time,
     total_time;
@@ -112,16 +105,19 @@ function startBenchmark(callback, cfg) {
     conn.query("DROP TABLE IF EXISTS " + cfg.test_table + ";").on('end', function () {
       conn.query(cfg.create_table_query).on('end', function () {
         total_time = ((new Date()) - start_time) / 1000;
-        util.puts("**** Benchmark initialization time is " + total_time + "s");
         
-        //reconnectAsyncBenchmark(callback, cfg);
-        insertAsyncBenchmark(callback, cfg);
+        results['init'] = total_time;
+        
+        //reconnectAsyncBenchmark(results, callback, cfg);
+        insertAsyncBenchmark(results, callback, cfg);
       });
     });
   });
 }
 
 exports.run = function (callback, cfg) {
-  startBenchmark(callback, cfg);
+  var results = {};
+  
+  startBenchmark(results, callback, cfg);
 };
 

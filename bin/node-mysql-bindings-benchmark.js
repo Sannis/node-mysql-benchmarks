@@ -15,10 +15,12 @@ var
                   ],
   util = require('util'),
   default_factor = 1,
-  factor = default_factor,
+  factor,
   cfg,
-  binding_filter;
+  binding_filter,
+  results = {};
 
+factor = default_factor;
 if (process.argv[2] !== undefined) {
   factor = Math.abs(process.argv[2]);
   
@@ -33,6 +35,10 @@ if (process.argv[3] !== undefined) {
 
 cfg = require("../src/config").getConfig(factor);
 
+function printResults() {
+  util.puts(util.inspect(results));
+}
+
 function runNextBenchmark() {
   if (bindings_list.length > 0) {
     var
@@ -40,20 +46,25 @@ function runNextBenchmark() {
       benchmark = require("../src/" + binding_name);
     
     if (!binding_filter || (binding_name.match(binding_filter))) {
-      util.puts("\u001B[1mBenchmarking " + binding_name + ":\u001B[22m");
+      util.print("Benchmarking " + binding_name + "... ");
       
-      benchmark.run(function () {
+      benchmark.run(function (binding_results) {
+        util.print("Done.\n");
+        results[binding_name] = binding_results;
+        
         runNextBenchmark();
       }, cfg);
     } else {
-      util.puts("\u001B[1mSkipping " + binding_name + "...\u001B[22m");
+      util.puts("Skipping " + binding_name + ".");
       
       runNextBenchmark();
     }
   } else {
-    util.puts("\u001B[1mAll benchmarks finished\u001B[22m");
+    util.puts("\u001B[1mAll benchmarks finished.\u001B[22m");
+    
+    printResults();
   }
 }
 
+util.puts("\u001B[1mBenchmarking...\u001B[22m");
 runNextBenchmark();
-

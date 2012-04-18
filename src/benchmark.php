@@ -34,58 +34,44 @@ foreach ($argv as $option)
 }
 
 //
-// Utility function
-//
-
-function do_benchmark($execute_function, $title, $count = 0)
-{
-    $start = microtime(true);
-    call_user_func($execute_function);
-    $finish = microtime(true);
-    
-    $suffix = "";
-    if( intval($count) > 0 )
-    {
-        $suffix = " (".round($count/($finish - $start), 0)."/s)";
-    }
-    
-    print($title." ".round(($finish - $start), 2)."s".$suffix."\n");
-}
-
-//
 // Benchmarking functions
 //
 
-function do_benchmark_select()
+function do_benchmark_selects()
 {
     global $conn, $cfg;
+    
+    usleep(intval($cfg['delay_before_select'])*1000); // micro seconds
+    
+    $start = microtime(true);
     
     $rows = array();
     
     $r = mysql_query("SELECT * FROM ".$cfg['test_table'].";", $conn);
     
-    while($row = mysql_fetch_array($r))
-    {
+    while ($row = mysql_fetch_array($r)) {
         $rows[] = $row;
     }
+    
+    $finish = microtime(true);
+    
+    return round(count($rows)/($finish - $start), 0);
 }
 
 function do_benchmark_inserts()
 {
     global $conn, $cfg;
     
-    for( $i = 0; $i < $cfg['insert_rows_count']; $i++ )
-    {
+    for ($i = 0; $i < $cfg['insert_rows_count']; $i++) {
         mysql_query($cfg['insert_query'], $conn);
     }
 }
 
-function do_benchmark_reconnect()
+function do_benchmark_reconnects()
 {
     global $conn, $cfg;
     
-    for( $i = 0; $i < $cfg['reconnect_count']; $i++ )
-    {
+    for ($i = 0; $i < $cfg['reconnect_count']; $i++) {
         mysql_close($conn);
         $conn = mysql_connect($cfg['host'], $cfg['user'], $cfg['password']);
         mysql_select_db($cfg['database'], $conn);
@@ -93,19 +79,18 @@ function do_benchmark_reconnect()
 
 }
 
-function do_benchmark_escape_string()
+function do_benchmark_escapes()
 {
     global $conn, $cfg;
     
     $escaped_string = "";
 
-    for( $i = 0; $i < $cfg['escape_count']; $i++ )
-    {
+    for ($i = 0; $i < $cfg['escape_count']; $i++) {
         $escaped_string = mysql_real_escape_string($cfg['string_to_escape'], $conn);
     }
 }
 
-function do_benchmark_initialization()
+function do_benchmark_init()
 {
     global $conn, $cfg;
     
@@ -116,22 +101,24 @@ function do_benchmark_initialization()
     mysql_query($cfg['create_table_query']);
 }
 
-// Initialize connection and database
-do_benchmark("do_benchmark_initialization", "**** Benchmark initialization time is");
+//
+// Do benchmarks
+//
 
-// Benchmark 1: Escapes
-do_benchmark("do_benchmark_escape_string", "**** ".$cfg['escape_count']." escapes in", $cfg['escape_count']);
+$benchmarks = array(
+    "init",
+    "escapes",
+    "reconnects",
+    "inserts",
+    "selects",
+);
 
-// Benchmark 2: Reconnects
-do_benchmark("do_benchmark_reconnect", "**** ".$cfg['reconnect_count']." sync reconnects in", $cfg['reconnect_count']);
+$results = array();
 
-// Benchmark 3: inserts
-do_benchmark("do_benchmark_inserts", "**** ".$cfg['insert_rows_count']." sync insertions in", $cfg['insert_rows_count']);
-
-usleep(intval($cfg['delay_before_select'])*1000); // _micro_seconds
-
-// Benchmark 3: selects
-do_benchmark("do_benchmark_select", "**** ".$cfg['insert_rows_count']." rows sync selected in", $cfg['insert_rows_count']);
+foreach ($benchmarks as $benchmark) {
+    $results[$benchmark] = call_user_func("do_benchmark_" . $benchmark);
+}
 
 mysql_close($conn);
 
+echo json_encode($results);
