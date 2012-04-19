@@ -11,10 +11,11 @@ var
                    'Sannis-node-mysql-libmysqlclient',
                    'felixge-node-mysql',
                    'sidorares-nodejs-mysql-native',
-                   'mariano-node-db-mysql',
-                   'w1nk-node-odbc-mysql'
+                   'mariano-node-db-mysql'/*,
+                   'w1nk-node-odbc-mysql'*/
                   ],
   util = require('util'),
+  Table = require('cli-table'),
   default_factor = 1,
   factor,
   cfg,
@@ -37,7 +38,26 @@ if (process.argv[3] !== undefined) {
 cfg = require("../src/config").getConfig(factor);
 
 function printResults() {
-  util.puts(util.inspect(results));
+  var table = new Table({
+    head: ["Author and module name", "Initialization", "Escapes", "Reconnects", "Inserts", "Selects"],
+    colWidths: [34, 16, 11, 11, 11, 11]
+  }), name;
+  
+  for (name in results) {
+    if (results.hasOwnProperty(name)) {
+      table.push([ name
+        , results[name]['init']       || '-'
+        , results[name]['escapes']    || '-'
+        , results[name]['reconnects'] || '-'
+        , results[name]['inserts']    || '-'
+        , results[name]['selects']    || '-'
+      ]);
+    }
+  }
+  
+  // Output results
+  util.puts("\u001B[1Results (init time in seconds, other values are operations per second):\u001B[22m");
+  console.log(table.toString());
 }
 
 function runNextBenchmark() {

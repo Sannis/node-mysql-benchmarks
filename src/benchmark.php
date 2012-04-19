@@ -122,7 +122,7 @@ function do_benchmark_init()
     
     $finish = microtime(true);
     
-    return ($finish - $start);
+    return round($finish - $start, 3);
 }
 
 //

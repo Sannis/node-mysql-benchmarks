@@ -41,10 +41,10 @@ void do_benchmark(void (*f)(long int), const char *key, long int count)
 
     if (count > 0) {
         operations = static_cast<long int>(static_cast<long double>(count) / delta);
-        
+
         printf("\"%s\": %ld, ", key, operations);
     } else {
-        printf("\"%s\": %.5Lf, ", key, delta);
+        printf("\"%s\": %.3Lf, ", key, delta);
     }
     fflush(stdout);
 }
@@ -199,11 +199,11 @@ int main(int argc, char *argv[])
     // Benchmark 3: selects
     /*count = atol(cfg["insert_rows_count"].c_str());
     do_benchmark(do_benchmark_select, selects, count);*/
-    
+
     // Print JSON object close bracket
     printf("\"0\": 0}");
 
     mysql_close(conn);
-    
+
     return 0;
 }
