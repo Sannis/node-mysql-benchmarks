@@ -1,8 +1,8 @@
-/*
-Copyright (C) 2010, Oleg Efimov <efimovov@gmail.com>
-
-See license text in LICENSE file
-*/
+/**
+ * Copyright (C) 2012, Dan VerWeire and other contributors
+ *
+ * See license text in LICENSE file
+ */
 
 // Require modules
 var

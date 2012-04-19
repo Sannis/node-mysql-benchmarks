@@ -1,9 +1,9 @@
 #!/usr/bin/env node
-/*
-Copyright (C) 2010, Oleg Efimov <efimovov@gmail.com>
-
-See license text in LICENSE file
-*/
+/**
+ * Copyright (C) 2012, Oleg Efimov and other contributors
+ *
+ * See license text in LICENSE file
+ */
 
 var
   bindings_list =
@@ -41,7 +41,23 @@ cfg = require("../src/config").getConfig(factor);
 function printResults() {
   var table = new Table({
     head: ["Author and module name", "Init", "Escapes", "Reconnects", "Inserts", "Selects"],
-    colWidths: [34, 7, 9, 12, 9, 9]
+    colWidths: [34, 7, 9, 12, 9, 9],
+    chars: {
+      'top': '-',
+      'top-mid':'+',
+      'top-left':'+',
+      'top-right':'+',
+      'bottom': '-',
+      'bottom-mid':'+',
+      'bottom-left':'+',
+      'bottom-right':'+',
+      'left': '|',
+      'left-mid': '+',
+      'mid': '-',
+      'mid-mid': '+',
+      'right': '|',
+      'right-mid': '+'
+    }
   }), name;
   
   for (name in results) {

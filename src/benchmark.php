@@ -1,10 +1,10 @@
 #!/usr/bin/env php
 <?php
-/*
-Copyright (C) 2010, Oleg Efimov <efimovov@gmail.com>
-
-See license text in LICENSE file
-*/
+/**
+ * Copyright (C) 2012, Oleg Efimov and other contributors
+ *
+ * See license text in LICENSE file
+ */
 
 $conn = null;
 
