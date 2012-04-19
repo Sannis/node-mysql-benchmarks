@@ -6,14 +6,15 @@ See license text in LICENSE file
 */
 
 var
-  bindings_list = ['CPP-MySQL',
-                   'PHP-MySQL',
-                   'Sannis-node-mysql-libmysqlclient',
-                   'felixge-node-mysql',
-                   'sidorares-nodejs-mysql-native',
-                   'mariano-node-db-mysql'/*,
-                   'w1nk-node-odbc-mysql'*/
-                  ],
+  bindings_list =
+    [ 'C'
+    , 'PHP'
+    , 'db-mysql'
+    , 'mysql'
+    , 'mysql-libmysqlclient'
+    , 'mysql-native'
+    , 'odbc'
+    ],
   util = require('util'),
   Table = require('cli-table'),
   default_factor = 1,

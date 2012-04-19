@@ -7,7 +7,7 @@ See license text in LICENSE file
 // Require modules
 var
   util = require('util'),
-  odbc = require('odbc').Database,
+  odbcDatabase,
   conn;
 
 function fetchAllAsyncBenchmark(results, callback, cfg) {
@@ -73,7 +73,7 @@ function startBenchmark(results, callback, cfg) {
 
   start_time = new Date();
 
-  conn = new odbc();
+  conn = new odbcDatabase();
 
   options_string = "DRIVER={MySQL};DATABASE=" + cfg.database
                  + ";USER=" + cfg.user
@@ -107,6 +107,14 @@ function startBenchmark(results, callback, cfg) {
 
 exports.run = function (callback, cfg) {
   var results = {};
-
+  
+  try {
+    odbcDatabase = require('odbc').Database;
+  } catch (e) {
+    callback(results);
+    
+    return;
+  }
+  
   startBenchmark(results, callback, cfg);
 };
