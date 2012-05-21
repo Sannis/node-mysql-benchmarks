@@ -4,7 +4,7 @@ from os.path import exists
 
 srcdir = "."
 blddir = "build"
-VERSION = "0.0.1"
+VERSION = "0.2.1"
 
 def set_options(opt):
   opt.tool_options('compiler_cxx')
@@ -14,15 +14,17 @@ def configure(conf):
   conf.check_tool('compiler_cxx')
   conf.env.append_unique('CXXFLAGS', ["-Wall"])
 
+  # MySQL headers
   conf.env.append_unique('CXXFLAGS', Utils.cmd_output(Options.options.mysql_config + ' --include').split())
-  
-  if conf.check_cxx(lib="mysqlclient_r", errmsg="not found, try to find nonthreadsafe libmysqlclient"):
-    conf.env.append_unique('LINKFLAGS', Utils.cmd_output(Options.options.mysql_config + ' --libs_r').split())
-  else:
-    conf.fatal("Missing libmysqlclient_r from libmysqlclient-devel or mysql-devel package")
-  
+
   if not conf.check_cxx(header_name='mysql.h'):
     conf.fatal("Missing mysql.h header from libmysqlclient-devel or mysql-devel package")
+
+  # MySQL libraries
+  conf.env.append_unique('LINKFLAGS', Utils.cmd_output(Options.options.mysql_config + ' --libs_r').split())
+
+  if not conf.check_cxx(lib="mysqlclient_r", errmsg="not found"):
+    conf.fatal("Missing thread-safe libmysqlclient_r library from libmysqlclient-devel or mysql-devel package")
 
 def build(bld):
   print("Build C++ benchmark")

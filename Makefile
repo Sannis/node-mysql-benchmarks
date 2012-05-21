@@ -21,7 +21,7 @@ dependencies: dependencies-stamp
 
 dependencies-stamp:
 		touch dependencies-stamp
-		npm install .
+		npm install
 
 lint: devdependencies
 		./node_modules/.bin/nodelint ./bin/*
@@ -34,7 +34,7 @@ devdependencies: devdependencies-stamp
 devdependencies-stamp:
 		touch dependencies-stamp
 		touch devdependencies-stamp
-		npm install --dev .
+		npm install --dev
 
 .PHONY: all rebuild clean clean-all build lint benchmark
 
