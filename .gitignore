@@ -5,3 +5,4 @@ node_modules
 build-stamp
 dependencies-stamp
 devdependencies-stamp
+npm-debug.log
