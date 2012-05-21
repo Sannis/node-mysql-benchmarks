@@ -7,7 +7,7 @@
 // Require modules
 var
   util = require('util'),
-  Mysql = require('mysql').Client,
+  mysql = require('mysql'),
   conn,
   rows;
 
@@ -93,13 +93,24 @@ function startBenchmark(results, callback, cfg) {
     total_time;
   
   start_time = new Date();
-  
-  conn = new Mysql();
-  
-  conn.host     = cfg.host;
-  conn.user     = cfg.user;
-  conn.password = cfg.password;
-  conn.database = cfg.database;
+
+  try {
+    // node-mysql ~0.9.x
+    conn = new mysql.Client();
+
+    conn.host     = cfg.host;
+    conn.user     = cfg.user;
+    conn.password = cfg.password;
+    conn.database = cfg.database;
+  } catch (e) {
+    // node-mysql ~2.x
+    conn = mysql.createConnection({
+      host:     cfg.host,
+      user:     cfg.user,
+      password: cfg.password,
+      database: cfg.database
+    });
+  }
   
   conn.query("DROP TABLE IF EXISTS " + cfg.test_table + ";", function (err) {
     if (err) {
