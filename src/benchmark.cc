@@ -17,6 +17,8 @@
 #include <cstdlib>
 #include <ctime>
 
+#include "current_utc_time.h"
+
 MYSQL *conn;
 
 std::map<std::string, std::string> cfg;
@@ -32,9 +34,9 @@ void do_benchmark(void (*f)(long int), const char *key, long int count)
     long double delta = 0;
     long int operations = 0;
 
-    clock_gettime(CLOCK_MONOTONIC_RAW, &start);
+    current_utc_time(&start);
     f(count);
-    clock_gettime(CLOCK_MONOTONIC_RAW, &finish);
+    current_utc_time(&finish);
 
     delta = static_cast<long double>(finish.tv_sec - start.tv_sec)
           + static_cast<long double>(finish.tv_nsec - start.tv_nsec) / 1.0e9;
