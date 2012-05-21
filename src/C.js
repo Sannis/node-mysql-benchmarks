@@ -38,7 +38,7 @@ exports.run = function (callback, cfg) {
     if (/^execvp\(\)/.test(data.asciiSlice(0, data.length))) {
       util.puts("Failed to start child process for C++ benchmark.");
     }
-    util.print('stderr: ' + data);
+    util.puts('stderr: ' + data);
   });
 
   cpp_child.on('exit', function (code) {
