@@ -28,10 +28,11 @@
   { "install" : "make all"
   , "test" : "./bin/node-mysql-bindings-benchmark.js"
   }
-, "engines" : { "node" : "0.6.x" }
+, "engines" : { "node" : ">=0.6.x" }
 , "dependencies" :
-  { "cli-table" : "0.0.1"
+  { "cli-table" : ">=0.0.1"
   , "mysql" : "0.9.6"
+  , "sys-not-throw" : ">=1.0.0"
   , "mysql-libmysqlclient" : "1.3.3"
   , "mysql-native" : "0.4.4"
   , "db-mysql" : "0.7.6"
