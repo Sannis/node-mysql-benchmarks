@@ -9,7 +9,7 @@ clean:
 		rm -f build-stamp
 
 clean-all: clean
-		rm -f dependencies-stamp devdependencies-stamp
+		rm -f dependencies-stamp
 
 build: build-stamp dependencies
 
@@ -23,18 +23,10 @@ dependencies-stamp:
 		touch dependencies-stamp
 		npm install
 
-lint: devdependencies
+lint: dependencies
 		./node_modules/.bin/nodelint ./bin/*
 
 benchmark: build
 		./bin/node-mysql-bindings-benchmark.js
 
-devdependencies: devdependencies-stamp
-
-devdependencies-stamp:
-		touch dependencies-stamp
-		touch devdependencies-stamp
-		npm install --dev
-
 .PHONY: all rebuild clean clean-all build lint benchmark
-
