@@ -17,6 +17,7 @@ var
     , 'mysql-libmysqlclient'
     , 'mysql-native'
     , 'odbc'
+    , 'mariasql'
     ],
   util = require('util'),
   Table = require('cli-table'),
