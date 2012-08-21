@@ -12,6 +12,7 @@
 #include <mysql.h>
 
 #include <map>
+#include <vector>
 #include <string>
 #include <cstdio>
 #include <cstdlib>
@@ -55,16 +56,29 @@ void do_benchmark(void (*f)(long int), const char *key, long int count)
 // Benchmarking functions
 //
 
-/*void do_benchmark_select() {
-    rows = array();
+void do_benchmark_select(long int count) {
+    MYSQL_RES* result;
+    MYSQL_ROW row;
+    char query[128];
+    unsigned int i, len;
+    std::vector<std::vector<std::string> > rows;
 
-    r = mysql_query(conn, "SELECT * FROM ".cfg["test_table"].";");
+    sprintf(query, "SELECT * FROM %s;", cfg["test_table"].c_str());
+    mysql_query(conn, query);
+    result = mysql_use_result(conn);
+    len = mysql_num_fields(result);
 
-    while(row = mysql_fetch_array(r))
+    while((row = mysql_fetch_row(result)))
     {
-        rows[] = row;
+        std::vector<std::string> fields;
+        for (i = 0; i < len; ++i)
+        {
+            fields.push_back(row[i]);
+        }
+        rows.push_back(fields);
     }
-}*/
+    mysql_free_result(result);
+}
 
 void do_benchmark_inserts(long int count)
 {
@@ -92,7 +106,7 @@ void do_benchmark_reconnect(long int count)
                                 cfg["user"].c_str(),
                                 cfg["password"].length() ? cfg["password"].c_str() : NULL,
                                 cfg["database"].c_str(),
-                                0, NULL, 0)
+                                atoi(cfg["port"].c_str()), NULL, 0)
         ) {
             printf("Error %d: %s\n", mysql_errno(conn), mysql_error(conn));
             mysql_close(conn);
@@ -127,7 +141,7 @@ void do_benchmark_initialization(long int count) {
                             cfg["user"].c_str(),
                             cfg["password"].length() ? cfg["password"].c_str() : NULL,
                             cfg["database"].c_str(),
-                            0, NULL, 0)
+                            atoi(cfg["port"].c_str()), NULL, 0)
     ) {
         printf("Error %d: %s\n", mysql_errno(conn), mysql_error(conn));
         mysql_close(conn);
@@ -147,6 +161,7 @@ int main(int argc, char *argv[])
 
     static struct option long_options[] = {
         {"host", required_argument, NULL, 0},
+        {"port", required_argument, NULL, 0},
         {"user", required_argument, NULL, 0},
         {"password", optional_argument, NULL, 0},
         {"database", required_argument, NULL, 0},
@@ -199,8 +214,8 @@ int main(int argc, char *argv[])
     sleep(atoi(cfg["delay_before_select"].c_str())/1000); // _micro_seconds
 
     // Benchmark 3: selects
-    /*count = atol(cfg["insert_rows_count"].c_str());
-    do_benchmark(do_benchmark_select, selects, count);*/
+    count = atol(cfg["insert_rows_count"].c_str());
+    do_benchmark(do_benchmark_select, "selects", count);
 
     // Print JSON object close bracket
     printf("\"0\": 0}");
