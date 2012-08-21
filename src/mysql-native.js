@@ -99,7 +99,7 @@ function startBenchmark(results, callback, cfg) {
   
   start_time = new Date();
   
-  conn = mysql.createTCPClient(cfg.host);
+  conn = mysql.createTCPClient(cfg.host, cfg.port);
   
   conn.auth(cfg.database, cfg.user, cfg.password).on('end', function (s) {
     conn.query("DROP TABLE IF EXISTS " + cfg.test_table + ";").on('end', function () {

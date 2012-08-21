@@ -82,7 +82,7 @@ function do_benchmark_reconnects()
     
     for ($i = 0; $i < $cfg['reconnect_count']; $i++) {
         mysql_close($conn);
-        $conn = mysql_connect($cfg['host'], $cfg['user'], $cfg['password']);
+        $conn = mysql_connect("{$cfg['host']}:{$cfg['port']}", $cfg['user'], $cfg['password']);
         mysql_select_db($cfg['database'], $conn);
     }
     
@@ -114,7 +114,7 @@ function do_benchmark_init()
     
     $start = microtime(true);
     
-    $conn = mysql_connect($cfg['host'], $cfg['user'], $cfg['password']);
+    $conn = mysql_connect("{$cfg['host']}:{$cfg['port']}", $cfg['user'], $cfg['password']);
     mysql_select_db($cfg['database'], $conn);
     
     mysql_query("DROP TABLE IF EXISTS ".$cfg['test_table'].";");
