@@ -5,11 +5,8 @@
  */
 
 // Require modules
-var
-  util = require('util'),
-  mysql = require('mysql'),
-  conn,
-  rows;
+var mysql = require('mysql'),
+    conn;
 
 function selectAsyncBenchmark(results, callback, cfg) {
   var
@@ -17,22 +14,26 @@ function selectAsyncBenchmark(results, callback, cfg) {
     total_time;
   
   start_time = new Date();
-  
-  conn.query("SELECT * FROM " + cfg.test_table + ";", function (err) {
-    if (err) {
-      console.log(err);
-    }
-    
-    total_time = ((new Date()) - start_time) / 1000;
-    
-    results['selects'] = Math.round(cfg.insert_rows_count / total_time)
-    
-    // Close connection
-    conn.end();
-    
-    // Finish benchmark
-    callback(results);
-  });
+
+  var rows = [];
+  conn.query("SELECT * FROM " + cfg.test_table)
+      .on('error', function(err) {
+        console.log(err);
+      })
+      .on('result', function(result) {
+        rows.push(result);
+      })
+      .on('end', function() {
+        total_time = ((new Date()) - start_time) / 1000;
+        
+        results['selects'] = Math.round(cfg.insert_rows_count / total_time)
+        
+        // Close connection
+        conn.end();
+        
+        // Finish benchmark
+        callback(results);
+      });
 }
 
 function insertAsyncBenchmark(results, callback, cfg) {
@@ -46,13 +47,11 @@ function insertAsyncBenchmark(results, callback, cfg) {
   function insertAsync() {
     i += 1;
     if (i <= cfg.insert_rows_count) {
-      conn.query(cfg.insert_query, function (err) {
-        if (err) {
-          console.log(err);
-        }
-        
-        insertAsync();
-      });
+      conn.query(cfg.insert_query)
+          .on('error', function(err) {
+            console.log(err);
+          })
+          .on('end', insertAsync);
     } else {
       total_time = ((new Date()) - start_time) / 1000;
       
@@ -94,42 +93,28 @@ function startBenchmark(results, callback, cfg) {
   
   start_time = new Date();
 
-  try {
-    // node-mysql ~0.9.x
-    conn = new mysql.Client();
-
-    conn.host     = cfg.host;
-    conn.user     = cfg.user;
-    conn.password = cfg.password;
-    conn.database = cfg.database;
-  } catch (e) {
-    // node-mysql ~2.x
-    conn = mysql.createConnection({
-      host:     cfg.host,
-      user:     cfg.user,
-      port:     cfg.port,
-      password: cfg.password,
-      database: cfg.database
-    });
-  }
-  
-  conn.query("DROP TABLE IF EXISTS " + cfg.test_table + ";", function (err) {
-    if (err) {
-      console.log(err);
-    }
-    
-    conn.query(cfg.create_table_query, function (err) {
-      if (err) {
-        console.log(err);
-      }
-      
-      total_time = ((new Date()) - start_time) / 1000;
-      
-      results['init'] = total_time;
-      
-      escapeBenchmark(results, callback, cfg);
-    });
+  conn = mysql.createConnection({
+    host:     cfg.host,
+    user:     cfg.user,
+    port:     cfg.port,
+    password: cfg.password,
+    database: cfg.database,
+    typeCast: false
   });
+  
+  conn.query("DROP TABLE IF EXISTS " + cfg.test_table)
+      .on('error', function(err) {
+        console.log(err);
+      });
+  conn.query(cfg.create_table_query)
+      .on('error', function(err) {
+        console.log(err);
+      })
+      .on('end', function() {
+        total_time = ((new Date()) - start_time) / 1000;
+        results['init'] = total_time;
+        escapeBenchmark(results, callback, cfg);
+      });
 }
 
 exports.run = function (callback, cfg) {
