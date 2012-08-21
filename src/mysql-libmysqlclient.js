@@ -131,7 +131,7 @@ function reconnectSyncBenchmark(results, callback, cfg) {
   
   for (i = 0; i < cfg.reconnect_count; i += 1) {
     conn.closeSync();
-    conn.connectSync(cfg.host, cfg.user, cfg.password, cfg.database);
+    conn.connectSync(cfg.host, cfg.user, cfg.password, cfg.database, cfg.port);
   }
   
   total_time = ((new Date()) - start_time) / 1000;
@@ -169,7 +169,7 @@ function startBenchmark(results, callback, cfg) {
   start_time = new Date();
   
   conn = mysql.createConnectionSync();
-  conn.connectSync(cfg.host, cfg.user, cfg.password, cfg.database);
+  conn.connectSync(cfg.host, cfg.user, cfg.password, cfg.database, cfg.port);
   
   conn.querySync("DROP TABLE IF EXISTS " + cfg.test_table + ";");
   conn.querySync(cfg.create_table_query);

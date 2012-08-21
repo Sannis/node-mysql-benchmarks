@@ -92,6 +92,7 @@ function startBenchmark(results, callback, cfg) {
   conn = new Client();
   conn.connect({
     host: cfg.host,
+    port: cfg.port,
     user: cfg.user,
     password: cfg.password,
     db: cfg.database

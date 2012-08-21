@@ -107,6 +107,7 @@ function startBenchmark(results, callback, cfg) {
     conn = mysql.createConnection({
       host:     cfg.host,
       user:     cfg.user,
+      port:     cfg.port,
       password: cfg.password,
       database: cfg.database
     });
