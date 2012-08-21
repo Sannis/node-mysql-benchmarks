@@ -14,10 +14,14 @@ function selectAsyncBenchmark(results, callback, cfg) {
     total_time;
   
   start_time = new Date();
-  
+
+  var rows = [];
   conn.query("SELECT * FROM " + cfg.test_table)
-      .on('error', function (err) {
+      .on('error', function(err) {
         console.log(err);
+      })
+      .on('result', function(result) {
+        rows.push(result);
       })
       .on('end', function() {
         total_time = ((new Date()) - start_time) / 1000;
@@ -44,7 +48,7 @@ function insertAsyncBenchmark(results, callback, cfg) {
     i += 1;
     if (i <= cfg.insert_rows_count) {
       conn.query(cfg.insert_query)
-          .on('error', function (err) {
+          .on('error', function(err) {
             console.log(err);
           })
           .on('end', insertAsync);
@@ -104,7 +108,7 @@ function startBenchmark(results, callback, cfg) {
         console.log(err);
       });
   conn.query(cfg.create_table_query)
-      .on('error', function (err) {
+      .on('error', function(err) {
         console.log(err);
       })
       .on('end', function() {
