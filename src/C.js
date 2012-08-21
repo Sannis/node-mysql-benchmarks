@@ -41,7 +41,8 @@ exports.run = function (callback, cfg) {
     util.puts('stderr: ' + data);
   });
 
-  cpp_child.on('exit', function (code) {
+var exitEvent = (process.versions.node >= '0.8.0' ? 'close' : 'exit');
+  cpp_child.on(exitEvent, function () {
     try {
       results = JSON.parse(results);
     } catch (e) {}
