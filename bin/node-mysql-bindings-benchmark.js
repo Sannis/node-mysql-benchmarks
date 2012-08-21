@@ -45,7 +45,7 @@ cfg = require("../src/config").getConfig(factor);
 function printResults() {
   var table = new Table({
     head: ["Author and module name", "Init", "Escapes", "Reconnects", "Inserts", "Selects"],
-    colWidths: [34, 7, 9, 12, 9, 9],
+    colWidths: [34, 7, 11, 12, 9, 9],
     chars: {
       'top': '-',
       'top-mid':'+',
