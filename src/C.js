@@ -6,12 +6,13 @@
 
 // Require modules
 var
-  util = require('util'),
-  spawn = require('child_process').spawn;
+  spawn = require('child_process').spawn,
+  inspect = require('util').inspect,
+  exitEvent = (process.versions.node >= '0.8.0' ? 'close' : 'exit');
 
 exports.run = function (callback, cfg) {
   var
-    cpp_child,
+    proc,
     args = [],
     key,
     results = '';
@@ -28,21 +29,21 @@ exports.run = function (callback, cfg) {
     }
   }
 
-  cpp_child = spawn(__dirname + '/../build/Release/benchmark', args);
+  proc = spawn(__dirname + '/../benchmark', args);
 
-  cpp_child.stdout.on('data', function (data) {
+  proc.stdout.on('data', function (data) {
     results += data;
   });
 
-  cpp_child.stderr.on('data', function (data) {
-    if (/^execvp\(\)/.test(data.asciiSlice(0, data.length))) {
-      util.puts("Failed to start child process for C++ benchmark.");
+  proc.stderr.setEncoding('utf8');
+  proc.stderr.on('data', function (data) {
+    if (/^execvp\(\)/.test(data.toString('ascii'))) {
+      console.error("Failed to start child process for C++ benchmark.");
     }
-    util.puts('stderr: ' + data);
+    console.error('stderr: ' + inspect(data));
   });
 
-var exitEvent = (process.versions.node >= '0.8.0' ? 'close' : 'exit');
-  cpp_child.on(exitEvent, function () {
+  proc.on(exitEvent, function () {
     try {
       results = JSON.parse(results);
     } catch (e) {}
