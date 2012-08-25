@@ -16,7 +16,7 @@ if (!module.parent) {
     start_time = Date.now();
 
     var rows = [];
-    conn.query("SELECT * FROM " + cfg.test_table)
+    conn.query(cfg.select_query)
         .on('error', function(err) {
           console.log(err);
         })
@@ -125,7 +125,7 @@ if (!module.parent) {
   process.stdin.on('end', function() {
     var results = {},
         callback = function() {
-          process.stdout.end(JSON.stringify(results));
+          process.stdout.write(JSON.stringify(results));
         };
     startBenchmark(results, callback, JSON.parse(cfg));
   });

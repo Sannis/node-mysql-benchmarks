@@ -19,7 +19,7 @@ if (!module.parent) {
     
     start_time = Date.now();
     
-    res = conn.querySync("SELECT * FROM " + cfg.test_table + ";");
+    res = conn.querySync(cfg.select_query);
     
     res.fetchAll(function (err, rows) {
       if (err) {
@@ -170,7 +170,7 @@ if (!module.parent) {
     conn = mysql.createConnectionSync();
     conn.connectSync(cfg.host, cfg.user, cfg.password, cfg.database, cfg.port);
     
-    conn.querySync("DROP TABLE IF EXISTS " + cfg.test_table + ";");
+    conn.querySync("DROP TABLE IF EXISTS " + cfg.test_table);
     conn.querySync(cfg.create_table_query);
     
     total_time = (Date.now() - start_time) / 1000;
@@ -188,7 +188,7 @@ if (!module.parent) {
   process.stdin.on('end', function() {
     var results = {},
         callback = function() {
-          process.stdout.end(JSON.stringify(results));
+          process.stdout.write(JSON.stringify(results));
         };
     startBenchmark(results, callback, JSON.parse(cfg));
   });

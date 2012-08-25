@@ -33,12 +33,12 @@ exports.getConfig = function (factor) {
 
   cfg.create_table_query = "CREATE TABLE " + cfg.test_table +
                            " (alpha INTEGER, beta VARCHAR(128), pi FLOAT) " +
-                           "ENGINE=MEMORY;";
+                           "ENGINE=MEMORY";
 
   cfg.insert_query = "INSERT INTO " + cfg.test_table +
-                     " VALUES (1, 'hello', 3.141);";
+                     " VALUES (1, 'hello', 3.141)";
 
-  cfg.selected_row_example = {alpha: 1, beta: 'hello', pi: 3.1415926};
+  cfg.select_query = "SELECT * AS `binStr` FROM " + cfg.test_table;
 
   return cfg;
 };

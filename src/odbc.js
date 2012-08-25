@@ -18,7 +18,7 @@ if (!module.parent) {
 
     start_time = Date.now();
 
-    conn.query("SELECT * FROM " + cfg.test_table + ";", function(error, result) {
+    conn.query(cfg.select_query, function(error, result) {
       if (error) {
           return console.log('ERROR: ' + error);
       }
@@ -84,7 +84,7 @@ if (!module.parent) {
           return console.log("CONNECTION ERROR: " + error);
       }
 
-      conn.query("DROP TABLE IF EXISTS " + cfg.test_table + ";", function(error, rows) {
+      conn.query("DROP TABLE IF EXISTS " + cfg.test_table, function(error, rows) {
         if (error) {
           return console.log('ERROR: ' + error);
         }
@@ -112,7 +112,7 @@ if (!module.parent) {
   process.stdin.on('end', function() {
     var results = {},
         callback = function() {
-          process.stdout.end(JSON.stringify(results));
+          process.stdout.write(JSON.stringify(results));
         };
     try {
       odbcDatabase = require('odbc').Database;

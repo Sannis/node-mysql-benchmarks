@@ -18,7 +18,7 @@ if (!module.parent) {
 
     start_time = Date.now();
 
-    conn.query("SELECT * FROM " + cfg.test_table + ";").execute(function(error, result) {
+    conn.query(cfg.select_query).execute(function(error, result) {
       if (error) {
           return console.log('ERROR: ' + error);
       }
@@ -103,7 +103,7 @@ if (!module.parent) {
 
       conn = this;
 
-      conn.query("DROP TABLE IF EXISTS " + cfg.test_table + ";").execute(function(error, rows) {
+      conn.query("DROP TABLE IF EXISTS " + cfg.test_table).execute(function(error, rows) {
         if (error) {
           return console.log('ERROR: ' + error);
         }
@@ -131,7 +131,7 @@ if (!module.parent) {
   process.stdin.on('end', function() {
     var results = {},
         callback = function() {
-          process.stdout.end(JSON.stringify(results));
+          process.stdout.write(JSON.stringify(results));
         };
     startBenchmark(results, callback, JSON.parse(cfg));
   });

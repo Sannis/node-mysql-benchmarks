@@ -59,23 +59,23 @@ void do_benchmark(void (*f)(long int), const char *key, long int count)
 void do_benchmark_select(long int count) {
     MYSQL_RES* result;
     MYSQL_ROW row;
-    char query[128];
-    unsigned int i, len;
-    std::vector<std::vector<std::string> > rows;
+    MYSQL_FIELD *fields;
+    unsigned int i, n_fields;
+    std::vector<std::map<const char*, const char*> > rows;
 
-    sprintf(query, "SELECT * FROM %s;", cfg["test_table"].c_str());
-    mysql_query(conn, query);
+    mysql_query(conn, cfg["select_query"].c_str());
     result = mysql_use_result(conn);
-    len = mysql_num_fields(result);
+    n_fields = mysql_num_fields(result);
+    fields = mysql_fetch_fields(result);
 
     while((row = mysql_fetch_row(result)))
     {
-        std::vector<std::string> fields;
-        for (i = 0; i < len; ++i)
+        std::map<const char*, const char*> map_fields;
+        for (i = 0; i < n_fields; ++i)
         {
-            fields.push_back(row[i]);
+            map_fields[fields[i].name] = row[i];
         }
-        rows.push_back(fields);
+        rows.push_back(map_fields);
     }
     mysql_free_result(result);
 }
@@ -83,9 +83,10 @@ void do_benchmark_select(long int count) {
 void do_benchmark_inserts(long int count)
 {
     long int i = 0;
+    const char* query = cfg["insert_query"].c_str();
 
     for (i = 0; i < count; i++) {
-        mysql_query(conn, cfg["insert_query"].c_str());
+        mysql_query(conn, query);
     }
 }
 
@@ -148,8 +149,8 @@ void do_benchmark_initialization(long int count) {
         exit(1);
     }
 
-    char drop_query[1024];
-    sprintf(drop_query, "DROP TABLE IF EXISTS %s;", cfg["test_table"].c_str());
+    char drop_query[128];
+    sprintf(drop_query, "DROP TABLE IF EXISTS %s", cfg["test_table"].c_str());
     mysql_query(conn, drop_query);
     mysql_query(conn, cfg["create_table_query"].c_str());
 }
@@ -167,6 +168,7 @@ int main(int argc, char *argv[])
         {"database", required_argument, NULL, 0},
         {"test_table", required_argument, NULL, 0},
         {"create_table_query", required_argument, NULL, 0},
+        {"select_query", required_argument, NULL, 0},
         {"escape_count", required_argument, NULL, 0},
         {"string_to_escape", required_argument, NULL, 0},
         {"reconnect_count", required_argument, NULL, 0},

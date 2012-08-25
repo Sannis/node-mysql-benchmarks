@@ -18,7 +18,7 @@ if (!module.parent) {
     
     start_time = Date.now();
     
-    conn.query("SELECT * FROM " + cfg.test_table + ";").on('row', function (row) {
+    conn.query(cfg.select_query).on('row', function (row) {
       rows.push(row);
     }).on('end', function () {
       total_time = (Date.now() - start_time) / 1000;
@@ -102,7 +102,7 @@ if (!module.parent) {
     conn = mysql.createTCPClient(cfg.host, cfg.port);
     
     conn.auth(cfg.database, cfg.user, cfg.password).on('end', function (s) {
-      conn.query("DROP TABLE IF EXISTS " + cfg.test_table + ";").on('end', function () {
+      conn.query("DROP TABLE IF EXISTS " + cfg.test_table).on('end', function () {
         conn.query(cfg.create_table_query).on('end', function () {
           total_time = (Date.now() - start_time) / 1000;
           
@@ -123,7 +123,7 @@ if (!module.parent) {
   process.stdin.on('end', function() {
     var results = {},
         callback = function() {
-          process.stdout.end(JSON.stringify(results));
+          process.stdout.write(JSON.stringify(results));
         };
     startBenchmark(results, callback, JSON.parse(cfg));
   });

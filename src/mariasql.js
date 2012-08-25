@@ -17,7 +17,7 @@ if (!module.parent) {
     start_time = Date.now();
 
     var rows = [];
-    conn.query("SELECT * FROM " + cfg.test_table)
+    conn.query(cfg.select_query)
         .on('error', function(err) {
           console.log(err);
         })
@@ -127,7 +127,7 @@ if (!module.parent) {
   process.stdin.on('end', function() {
     var results = {},
         callback = function() {
-          process.stdout.end(JSON.stringify(results));
+          process.stdout.write(JSON.stringify(results));
         };
     startBenchmark(results, callback, JSON.parse(cfg));
   });
@@ -142,6 +142,9 @@ exports.run = function (callback, cfg) {
     proc.stdout.setEncoding('ascii');
     proc.stdout.on('data', function(data) {
       out += data;
+    });
+    proc.stderr.on('data', function(data) {
+      process.stderr.write(data);
     });
     proc.on(exitEvent, function() {
       callback(JSON.parse(out));
