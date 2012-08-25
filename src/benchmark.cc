@@ -9,7 +9,7 @@
 #endif
 #include <getopt.h>
 
-#include <mysql.h>
+#include <mysql/mysql.h>
 
 #include <map>
 #include <vector>
