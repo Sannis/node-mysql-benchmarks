@@ -12,6 +12,7 @@ var
 
 exports.run = function (callback, cfg) {
   setTimeout(function() {
+    process.stdout.write('starting ... ');
     var
       proc,
       results = '';
