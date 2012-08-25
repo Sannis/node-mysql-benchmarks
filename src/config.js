@@ -38,7 +38,7 @@ exports.getConfig = function (factor) {
   cfg.insert_query = "INSERT INTO " + cfg.test_table +
                      " VALUES (1, 'hello', 3.141)";
 
-  cfg.select_query = "SELECT * AS `binStr` FROM " + cfg.test_table;
+  cfg.select_query = "SELECT * FROM " + cfg.test_table;
 
   return cfg;
 };
