@@ -11,7 +11,7 @@
 
 #include <mysql/mysql.h>
 
-#include <map>
+#include <unordered_map>
 #include <vector>
 #include <string>
 #include <cstdio>
@@ -22,7 +22,7 @@
 
 MYSQL *conn;
 
-std::map<std::string, std::string> cfg;
+std::unordered_map<std::string, std::string> cfg;
 
 //
 // Utility function for benchmarking
@@ -61,7 +61,7 @@ void do_benchmark_select(long int count) {
     MYSQL_ROW row;
     MYSQL_FIELD *fields;
     unsigned int i, n_fields;
-    std::vector<std::map<const char*, const char*> > rows;
+    std::vector<std::unordered_map<const char*, const char*> > rows;
 
     mysql_query(conn, cfg["select_query"].c_str());
     result = mysql_use_result(conn);
@@ -70,7 +70,7 @@ void do_benchmark_select(long int count) {
 
     while((row = mysql_fetch_row(result)))
     {
-        std::map<const char*, const char*> map_fields;
+        std::unordered_map<const char*, const char*> map_fields;
         for (i = 0; i < n_fields; ++i)
         {
             map_fields[fields[i].name] = row[i];
