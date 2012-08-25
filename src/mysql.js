@@ -18,7 +18,7 @@ if (!module.parent) {
     var rows = [];
     conn.query(cfg.select_query)
         .on('error', function(err) {
-          console.log(err);
+          console.error(err);
         })
         .on('result', function(result) {
           rows.push(result);
@@ -49,7 +49,7 @@ if (!module.parent) {
       if (i <= cfg.insert_rows_count) {
         conn.query(cfg.insert_query)
             .on('error', function(err) {
-              console.log(err);
+              console.error(err);
             })
             .on('end', insertAsync);
       } else {
@@ -104,11 +104,11 @@ if (!module.parent) {
     
     conn.query("DROP TABLE IF EXISTS " + cfg.test_table)
         .on('error', function(err) {
-          console.log(err);
+          console.error(err);
         });
     conn.query(cfg.create_table_query)
         .on('error', function(err) {
-          console.log(err);
+          console.error(err);
         })
         .on('end', function() {
           total_time = (Date.now() - start_time) / 1000;
@@ -136,10 +136,15 @@ exports.run = function (callback, cfg) {
   setTimeout(function() {
     var proc = require('child_process').spawn('node', [__filename]),
         exitEvent = (process.versions.node >= '0.8.0' ? 'close' : 'exit'),
+        inspect = require('util').inspect,
         out = '';
     proc.stdout.setEncoding('ascii');
     proc.stdout.on('data', function(data) {
       out += data;
+    });
+    proc.stderr.setEncoding('utf8');
+    proc.stderr.on('data', function(data) {
+      console.error('stderr: ' + inspect(data));
     });
     proc.on(exitEvent, function() {
       callback(JSON.parse(out));

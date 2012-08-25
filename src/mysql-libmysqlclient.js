@@ -23,7 +23,7 @@ if (!module.parent) {
     
     res.fetchAll(function (err, rows) {
       if (err) {
-        console.log(err);
+        console.error(err);
       }
       
       total_time = (Date.now() - start_time) / 1000;
@@ -81,7 +81,7 @@ if (!module.parent) {
       if (i <= cfg.insert_rows_count) {
         conn.query(cfg.insert_query, function (err) {
           if (err) {
-            console.log(err);
+            console.error(err);
           }
           
           insertAsync();
@@ -199,10 +199,15 @@ exports.run = function (callback, cfg) {
   setTimeout(function() {
     var proc = require('child_process').spawn('node', [__filename]),
         exitEvent = (process.versions.node >= '0.8.0' ? 'close' : 'exit'),
+        inspect = require('util').inspect,
         out = '';
     proc.stdout.setEncoding('ascii');
     proc.stdout.on('data', function(data) {
       out += data;
+    });
+    proc.stderr.setEncoding('utf8');
+    proc.stderr.on('data', function(data) {
+      console.error('stderr: ' + inspect(data));
     });
     proc.on(exitEvent, function() {
       callback(JSON.parse(out));

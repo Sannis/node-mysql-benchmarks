@@ -6,8 +6,8 @@
 
 // Require modules
 var
-  util = require('util'),
   spawn = require('child_process').spawn,
+  inspect = require('util').inspect,
   exitEvent = (process.versions.node >= '0.8.0' ? 'close' : 'exit');
 
 exports.run = function (callback, cfg) {
@@ -22,11 +22,12 @@ exports.run = function (callback, cfg) {
       results += data;
     });
 
+    proc.stderr.setEncoding('utf8');
     proc.stderr.on('data', function (data) {
-      if (/^execvp\(\)/.test(data.toString('ascii'))) {
-        util.puts("Failed to start child process for PHP benchmark.");
+      if (/^execvp\(\)/.test(data)) {
+        console.error("Failed to start child process for PHP benchmark.");
       }
-      util.puts('stderr: ' + data);
+      console.error('stderr: ' + inspect(data));
     });
 
     proc.on('exit', function (code) {

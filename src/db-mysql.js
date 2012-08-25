@@ -20,7 +20,7 @@ if (!module.parent) {
 
     conn.query(cfg.select_query).execute(function(error, result) {
       if (error) {
-          return console.log('ERROR: ' + error);
+          return console.error('ERROR: ' + error);
       }
 
       total_time = (Date.now() - start_time) / 1000;
@@ -45,7 +45,7 @@ if (!module.parent) {
       if (i <= cfg.insert_rows_count) {
         conn.query(cfg.insert_query).execute(function(error, result) {
           if (error) {
-              return console.log('ERROR: ' + error);
+              return console.error('ERROR: ' + error);
           }
 
           insertAsync();
@@ -98,19 +98,19 @@ if (!module.parent) {
         database: cfg.database
     }).connect(function(error) {
       if (error) {
-          return console.log("CONNECTION ERROR: " + error);
+          return console.error("CONNECTION ERROR: " + error);
       }
 
       conn = this;
 
       conn.query("DROP TABLE IF EXISTS " + cfg.test_table).execute(function(error, rows) {
         if (error) {
-          return console.log('ERROR: ' + error);
+          return console.error('ERROR: ' + error);
         }
 
         conn.query(cfg.create_table_query).execute(function(error, rows) {
           if (error) {
-            return console.log('ERROR: ' + error);
+            return console.error('ERROR: ' + error);
           }
 
           total_time = (Date.now() - start_time) / 1000;
@@ -142,10 +142,15 @@ exports.run = function (callback, cfg) {
   setTimeout(function() {
     var proc = require('child_process').spawn('node', [__filename]),
         exitEvent = (process.versions.node >= '0.8.0' ? 'close' : 'exit'),
+        inspect = require('util').inspect,
         out = '';
     proc.stdout.setEncoding('ascii');
     proc.stdout.on('data', function(data) {
       out += data;
+    });
+    proc.stderr.setEncoding('utf8');
+    proc.stderr.on('data', function(data) {
+      console.error('stderr: ' + inspect(data));
     });
     proc.on(exitEvent, function() {
       callback(JSON.parse(out));
