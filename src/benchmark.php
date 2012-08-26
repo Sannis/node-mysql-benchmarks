@@ -8,31 +8,12 @@
 
 $conn = null;
 
-//
-// Parse options
-// A very basic pseudo --options parser
-//
-
-$cfg = array();
-$m = false;
-$next_option_key = false;
-
-foreach ($argv as $option)
-{
-    if ($next_option_key)
-    {
-        $cfg[str_replace("-", "_", $next_option_key)] = $option;
-        $next_option_key = false;
-    }
-    elseif (preg_match("/[-]{1,2}([^=]+)=(.+)/", $option, $m))
-    {
-        $cfg[str_replace("-", "_", $m[1])] = $m[2];
-    }
-    elseif (preg_match("/[-]{1,2}(.+)/", $option, $m))
-    {
-        $next_option_key = $m[1];
-    }
-}
+$cfg = "";
+$f = fopen('php://stdin', 'r');
+while ($line = fgets($f))
+  $cfg .= $line;
+fclose($f);
+$cfg = json_decode($cfg, true);
 
 //
 // Benchmarking functions
@@ -48,7 +29,7 @@ function do_benchmark_selects()
     
     $rows = array();
     
-    $r = mysql_query("SELECT * FROM ".$cfg['test_table'].";", $conn);
+    $r = mysql_query($cfg['select_query'], $conn);
     
     while ($row = mysql_fetch_array($r)) {
         $rows[] = $row;
@@ -117,7 +98,7 @@ function do_benchmark_init()
     $conn = mysql_connect("{$cfg['host']}:{$cfg['port']}", $cfg['user'], $cfg['password']);
     mysql_select_db($cfg['database'], $conn);
     
-    mysql_query("DROP TABLE IF EXISTS ".$cfg['test_table'].";");
+    mysql_query("DROP TABLE IF EXISTS ".$cfg['test_table']);
     mysql_query($cfg['create_table_query']);
     
     $finish = microtime(true);
