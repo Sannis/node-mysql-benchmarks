@@ -28,7 +28,8 @@ exports.getConfig = function (factor) {
 
     // Delay before assertion check (ms)
     delay_before_select: 1000,
-    cooldown: 10000
+    cooldown: 10000,
+    use_array_rows: true
   };
 
   cfg.create_table_query = "CREATE TABLE " + cfg.test_table +
