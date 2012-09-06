@@ -13,15 +13,13 @@ if (!module.parent) {
     var
       start_time,
       total_time,
-      factor = cfg.do_not_run_sync_if_async_exists ? 1 : 2,
-      res,
-      rows;
+      res;
     
     start_time = Date.now();
     
     res = conn.querySync(cfg.select_query);
     
-    res.fetchAll(function (err, rows) {
+    res.fetchAll({asArray: cfg.use_array_rows}, function (err, rows) {
       if (err) {
         console.error(err);
       }
@@ -36,36 +34,6 @@ if (!module.parent) {
       // Finish benchmark
       callback(results);
     });
-  }
-
-  function fetchObjectLoopSyncBenchmark(results, callback, cfg) {
-    var
-      start_time,
-      total_time,
-      factor = cfg.do_not_run_sync_if_async_exists ? 1 : 2,
-      res,
-      row,
-      rows = [];
-    
-    start_time = Date.now();
-    
-    res = conn.querySync("SELECT * FROM " + cfg.test_table + ";");
-    
-    row = res.fetchObjectSync();
-    
-    while (row) {
-      rows.push(row);
-      
-      row = res.fetchObjectSync();
-    }
-    
-    res.freeSync();
-    
-    total_time = (Date.now() - start_time) / 1000;
-    
-    results['selectsWAT'] = Math.round(cfg.insert_rows_count / total_time);
-    
-    fetchAllAsyncBenchmark(results, callback, cfg);
   }
 
   function insertAsyncBenchmark(results, callback, cfg) {
@@ -92,7 +60,7 @@ if (!module.parent) {
         results['inserts'] = Math.round(cfg.insert_rows_count / total_time);
         
         setTimeout(function () {
-          fetchObjectLoopSyncBenchmark(results, callback, cfg);
+          fetchAllAsyncBenchmark(results, callback, cfg);
         }, cfg.delay_before_select);
       }
     }
@@ -211,7 +179,10 @@ exports.run = function (callback, cfg) {
       console.error('stderr: ' + inspect(data));
     });
     proc.on(exitEvent, function() {
-      callback(JSON.parse(out));
+      try {
+        out = JSON.parse(out);
+      } catch (e) {}
+      callback(out);
     });
     proc.stdin.end(JSON.stringify(cfg));
   }, cfg.cooldown);

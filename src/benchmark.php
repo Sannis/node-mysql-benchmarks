@@ -31,8 +31,14 @@ function do_benchmark_selects()
     
     $r = mysql_query($cfg['select_query'], $conn);
     
-    while ($row = mysql_fetch_array($r)) {
-        $rows[] = $row;
+    if ($cfg['use_array_rows']) {
+      while ($row = mysql_fetch_row($r)) {
+          $rows[] = $row;
+      }
+    } else {
+      while ($row = mysql_fetch_assoc($r)) {
+          $rows[] = $row;
+      }
     }
     
     $finish = microtime(true);

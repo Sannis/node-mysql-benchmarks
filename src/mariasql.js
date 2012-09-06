@@ -17,24 +17,29 @@ if (!module.parent) {
     start_time = Date.now();
 
     var rows = [];
-    conn.query(cfg.select_query)
+    conn.query(cfg.select_query, cfg.use_array_rows)
+        .on('result', function(r) {
+          r.on('error', function(err) {
+            console.error(err);
+          })
+          .on('row', function(row) {
+            rows.push(row);
+          })
+          .on('end', function() {
+            total_time = (Date.now() - start_time) / 1000;
+
+            results['selects'] = Math.round(cfg.insert_rows_count / total_time)
+
+            // Close connection
+            conn.end();
+
+            // Finish benchmark
+            callback(results);
+          });
+        })
         .on('error', function(err) {
           console.error(err);
         })
-        .on('result', function(result) {
-          rows.push(result);
-        })
-        .on('end', function() {
-          total_time = (Date.now() - start_time) / 1000;
-
-          results['selects'] = Math.round(cfg.insert_rows_count / total_time)
-
-          // Close connection
-          conn.end();
-
-          // Finish benchmark
-          callback(results);
-        });
   }
 
   function insertAsyncBenchmark(results, callback, cfg) {
@@ -49,10 +54,15 @@ if (!module.parent) {
       i += 1;
       if (i <= cfg.insert_rows_count) {
         conn.query(cfg.insert_query)
+            .on('result', function(r) {
+              r.on('error', function(err) {
+                console.error(err);
+              })
+              .on('end', insertAsync);
+            })
             .on('error', function(err) {
               console.error(err);
-            })
-            .on('end', insertAsync);
+            });
       } else {
         total_time = (Date.now() - start_time) / 1000;
         
@@ -104,10 +114,10 @@ if (!module.parent) {
     });
 
     
-    conn.query("DROP TABLE IF EXISTS " + cfg.test_table)
+    conn.query('DROP TABLE IF EXISTS ' + cfg.test_table)
         .on('error', function(err) {
           console.error(err);
-        });
+        })
     conn.query(cfg.create_table_query)
         .on('error', function(err) {
           console.error(err);
@@ -150,7 +160,10 @@ exports.run = function (callback, cfg) {
       console.error('stderr: ' + inspect(data));
     });
     proc.on(exitEvent, function() {
-      callback(JSON.parse(out));
+      try {
+        out = JSON.parse(out);
+      } catch (e) {}
+      callback(out);
     });
     proc.stdin.end(JSON.stringify(cfg));
   }, cfg.cooldown);

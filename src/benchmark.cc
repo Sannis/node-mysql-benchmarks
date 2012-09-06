@@ -13,6 +13,7 @@
 
 #include <unordered_map>
 #include <vector>
+#include <cstring>
 #include <string>
 #include <cstdio>
 #include <cstdlib>
@@ -61,21 +62,34 @@ void do_benchmark_select(long int count) {
     MYSQL_ROW row;
     MYSQL_FIELD *fields;
     unsigned int i, n_fields;
-    std::vector<std::unordered_map<const char*, const char*> > rows;
 
     mysql_query(conn, cfg["select_query"].c_str());
     result = mysql_use_result(conn);
     n_fields = mysql_num_fields(result);
     fields = mysql_fetch_fields(result);
 
-    while((row = mysql_fetch_row(result)))
-    {
-        std::unordered_map<const char*, const char*> map_fields;
-        for (i = 0; i < n_fields; ++i)
-        {
-            map_fields[fields[i].name] = row[i];
-        }
-        rows.push_back(map_fields);
+    if (cfg["use_array_rows"] == "0") {
+      std::vector<std::unordered_map<const char*, const char*> > rows;
+      while((row = mysql_fetch_row(result)))
+      {
+          std::unordered_map<const char*, const char*> map_fields;
+          for (i = 0; i < n_fields; ++i)
+          {
+              map_fields[fields[i].name] = strdup(row[i]);
+          }
+          rows.push_back(map_fields);
+      }
+    } else {
+      std::vector<std::vector<const char*> > rows;
+      while((row = mysql_fetch_row(result)))
+      {
+          std::vector<const char*> vals;
+          for (i = 0; i < n_fields; ++i)
+          {
+              vals.push_back(strdup(row[i]));
+          }
+          rows.push_back(vals);
+      }
     }
     mysql_free_result(result);
 }
@@ -174,7 +188,8 @@ int main(int argc, char *argv[])
         {"reconnect_count", required_argument, NULL, 0},
         {"insert_rows_count", required_argument, NULL, 0},
         {"insert_query", required_argument, NULL, 0},
-        {"delay_before_select", required_argument, NULL, 0}
+        {"delay_before_select", required_argument, NULL, 0},
+        {"use_array_rows", required_argument, NULL, 0}
     };
     int option_index = 0;
 

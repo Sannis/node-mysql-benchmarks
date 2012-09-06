@@ -13,27 +13,33 @@ if (!module.parent) {
       start_time,
       total_time;
     
-    start_time = Date.now();
-
-    var rows = [];
-    conn.query(cfg.select_query)
-        .on('error', function(err) {
-          console.error(err);
-        })
-        .on('result', function(result) {
-          rows.push(result);
-        })
-        .on('end', function() {
-          total_time = (Date.now() - start_time) / 1000;
-          
-          results['selects'] = Math.round(cfg.insert_rows_count / total_time)
-          
-          // Close connection
-          conn.end();
-          
-          // Finish benchmark
-          callback(results);
-        });
+    if (cfg.use_array_rows) {
+      console.error('Array rows not implemented');
+      results['selects'] = 0;
+      conn.end();
+      callback(results);
+    } else {
+      var rows = [];
+      start_time = Date.now();
+      conn.query(cfg.select_query)
+          .on('error', function(err) {
+            console.error(err);
+          })
+          .on('result', function(result) {
+            rows.push(result);
+          })
+          .on('end', function() {
+            total_time = (Date.now() - start_time) / 1000;
+            
+            results['selects'] = Math.round(cfg.insert_rows_count / total_time)
+            
+            // Close connection
+            conn.end();
+            
+            // Finish benchmark
+            callback(results);
+          });
+    }
   }
 
   function insertAsyncBenchmark(results, callback, cfg) {
@@ -148,7 +154,10 @@ exports.run = function (callback, cfg) {
       console.error('stderr: ' + inspect(data));
     });
     proc.on(exitEvent, function() {
-      callback(JSON.parse(out));
+      try {
+        out = JSON.parse(out);
+      } catch (e) {}
+      callback(out);
     });
     proc.stdin.end(JSON.stringify(cfg));
   }, cfg.cooldown);

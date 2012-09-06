@@ -100,7 +100,7 @@ if (!module.parent) {
     start_time = Date.now();
     
     conn = mysql.createTCPClient(cfg.host, cfg.port);
-    
+    conn.set('row_as_hash', !cfg.use_array_rows);
     conn.auth(cfg.database, cfg.user, cfg.password).on('end', function (s) {
       conn.query("DROP TABLE IF EXISTS " + cfg.test_table).on('end', function () {
         conn.query(cfg.create_table_query).on('end', function () {
@@ -146,7 +146,10 @@ exports.run = function (callback, cfg) {
       console.error('stderr: ' + inspect(data));
     });
     proc.on(exitEvent, function() {
-      callback(JSON.parse(out));
+      try {
+        out = JSON.parse(out);
+      } catch (e) {}
+      callback(out);
     });
     proc.stdin.end(JSON.stringify(cfg));
   }, cfg.cooldown);
