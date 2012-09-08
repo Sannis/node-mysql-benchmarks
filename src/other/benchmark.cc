@@ -164,7 +164,7 @@ int main(int argc, char *argv[])
         {"host", required_argument, NULL, 0},
         {"port", required_argument, NULL, 0},
         {"user", required_argument, NULL, 0},
-        {"password", optional_argument, NULL, 0},
+        {"password", required_argument, NULL, 0},
         {"database", required_argument, NULL, 0},
         {"test_table", required_argument, NULL, 0},
         {"create_table_query", required_argument, NULL, 0},
