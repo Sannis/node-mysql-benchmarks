@@ -24,6 +24,7 @@ if (!module.parent) {
     res.fetchAll(function (err, rows) {
       if (err) {
         console.error(err);
+        process.exit();
       }
       
       total_time = (Date.now() - start_time) / 1000;
@@ -50,6 +51,9 @@ if (!module.parent) {
     start_time = Date.now();
     
     res = conn.querySync("SELECT * FROM " + cfg.test_table + ";");
+    if (!res) {
+      console.error("Query error " + conn.errnoSync() + ": " + conn.errorSync());
+    }
     
     row = res.fetchObjectSync();
     
@@ -82,6 +86,7 @@ if (!module.parent) {
         conn.query(cfg.insert_query, function (err) {
           if (err) {
             console.error(err);
+            process.exit();
           }
           
           insertAsync();
@@ -110,7 +115,10 @@ if (!module.parent) {
     start_time = Date.now();
     
     for (i = 0; i < cfg.insert_rows_count; i += 1) {
-      res = conn.querySync(cfg.insert_query);
+      if (!conn.querySync(cfg.insert_query)) {
+        console.error("Query error " + conn.errnoSync() + ": " + conn.errorSync());
+        process.exit();
+      }
     }
     
     total_time = (Date.now() - start_time) / 1000;
@@ -130,7 +138,10 @@ if (!module.parent) {
     
     for (i = 0; i < cfg.reconnect_count; i += 1) {
       conn.closeSync();
-      conn.connectSync(cfg.host, cfg.user, cfg.password, cfg.database, cfg.port);
+      if (!conn.connectSync(cfg.host, cfg.user, cfg.password, cfg.database, cfg.port)) {
+        console.error("Connect error " + conn.connectErrno + ": " + conn.connectError);
+        process.exit();
+      }
     }
     
     total_time = (Date.now() - start_time) / 1000;
@@ -168,10 +179,20 @@ if (!module.parent) {
     start_time = Date.now();
     
     conn = mysql.createConnectionSync();
-    conn.connectSync(cfg.host, cfg.user, cfg.password, cfg.database, cfg.port);
+    if (!conn.connectSync(cfg.host, cfg.user, cfg.password, cfg.database, cfg.port)) {
+      console.error("Connect error " + conn.connectErrno + ": " + conn.connectError);
+      process.exit();
+    }
     
-    conn.querySync("DROP TABLE IF EXISTS " + cfg.test_table);
-    conn.querySync(cfg.create_table_query);
+    if (!conn.querySync("DROP TABLE IF EXISTS " + cfg.test_table)) {
+      console.error("Query error " + conn.errnoSync() + ": " + conn.errorSync());
+      process.exit();
+    }
+
+    if (!conn.querySync(cfg.create_table_query)) {
+      console.error("Query error " + conn.errnoSync() + ": " + conn.errorSync());
+      process.exit();
+    }
     
     total_time = (Date.now() - start_time) / 1000;
     

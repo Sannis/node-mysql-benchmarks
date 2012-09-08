@@ -20,6 +20,7 @@ if (!module.parent) {
     conn.query(cfg.select_query)
         .on('error', function(err) {
           console.error(err);
+          process.exit();
         })
         .on('result', function(result) {
           rows.push(result);
@@ -27,7 +28,7 @@ if (!module.parent) {
         .on('end', function() {
           total_time = (Date.now() - start_time) / 1000;
 
-          results['selects'] = Math.round(cfg.insert_rows_count / total_time)
+          results['selects'] = Math.round(cfg.insert_rows_count / total_time);
 
           // Close connection
           conn.end();
@@ -51,12 +52,13 @@ if (!module.parent) {
         conn.query(cfg.insert_query)
             .on('error', function(err) {
               console.error(err);
+              process.exit();
             })
             .on('end', insertAsync);
       } else {
         total_time = (Date.now() - start_time) / 1000;
         
-        results['inserts'] = Math.round(cfg.insert_rows_count / total_time)
+        results['inserts'] = Math.round(cfg.insert_rows_count / total_time);
         
         setTimeout(function () {
           selectAsyncBenchmark(results, callback, cfg);
@@ -82,7 +84,7 @@ if (!module.parent) {
     
     total_time = (Date.now() - start_time) / 1000;
     
-    results['escapes'] = Math.round(cfg.escape_count / total_time)
+    results['escapes'] = Math.round(cfg.escape_count / total_time);
     
     insertAsyncBenchmark(results, callback, cfg);
   }
@@ -107,10 +109,12 @@ if (!module.parent) {
     conn.query("DROP TABLE IF EXISTS " + cfg.test_table)
         .on('error', function(err) {
           console.error(err);
+          process.exit();
         });
     conn.query(cfg.create_table_query)
         .on('error', function(err) {
           console.error(err);
+          process.exit();
         })
         .on('end', function() {
           total_time = (Date.now() - start_time) / 1000;

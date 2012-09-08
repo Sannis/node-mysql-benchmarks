@@ -20,7 +20,8 @@ if (!module.parent) {
 
     conn.query(cfg.select_query).execute(function(error, result) {
       if (error) {
-          return console.error('ERROR: ' + error);
+        console.error(error);
+        process.exit();
       }
 
       total_time = (Date.now() - start_time) / 1000;
@@ -45,7 +46,8 @@ if (!module.parent) {
       if (i <= cfg.insert_rows_count) {
         conn.query(cfg.insert_query).execute(function(error, result) {
           if (error) {
-              return console.error('ERROR: ' + error);
+            console.error(error);
+            process.exit();
           }
 
           insertAsync();
@@ -98,19 +100,22 @@ if (!module.parent) {
         database: cfg.database
     }).connect(function(error) {
       if (error) {
-          return console.error("CONNECTION ERROR: " + error);
+        console.error(error);
+        process.exit();
       }
 
       conn = this;
 
       conn.query("DROP TABLE IF EXISTS " + cfg.test_table).execute(function(error, rows) {
         if (error) {
-          return console.error('ERROR: ' + error);
+          console.error(error);
+          process.exit();
         }
 
         conn.query(cfg.create_table_query).execute(function(error, rows) {
           if (error) {
-            return console.error('ERROR: ' + error);
+            console.error(error);
+            process.exit();
           }
 
           total_time = (Date.now() - start_time) / 1000;

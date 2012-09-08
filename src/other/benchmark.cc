@@ -109,7 +109,7 @@ void do_benchmark_reconnect(long int count)
                                 cfg["database"].c_str(),
                                 atoi(cfg["port"].c_str()), NULL, 0)
         ) {
-            fprintf(stderr, "Error %d: %s\n", mysql_errno(conn), mysql_error(conn));
+            fprintf(stderr, "[Re]Connect error %d: %s\n", mysql_errno(conn), mysql_error(conn));
             mysql_close(conn);
             exit(1);
         }
@@ -144,7 +144,7 @@ void do_benchmark_initialization(long int count) {
                             cfg["database"].c_str(),
                             atoi(cfg["port"].c_str()), NULL, 0)
     ) {
-        fprintf(stderr, "Error %d: %s\n", mysql_errno(conn), mysql_error(conn));
+        fprintf(stderr, "Connect error %d: %s\n", mysql_errno(conn), mysql_error(conn));
         mysql_close(conn);
         exit(1);
     }

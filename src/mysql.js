@@ -19,6 +19,7 @@ if (!module.parent) {
     conn.query(cfg.select_query)
         .on('error', function(err) {
           console.error(err);
+          process.exit();
         })
         .on('result', function(result) {
           rows.push(result);
@@ -50,6 +51,7 @@ if (!module.parent) {
         conn.query(cfg.insert_query)
             .on('error', function(err) {
               console.error(err);
+              process.exit();
             })
             .on('end', insertAsync);
       } else {
@@ -95,20 +97,21 @@ if (!module.parent) {
 
     conn = mysql.createConnection({
       host:     cfg.host,
-      user:     cfg.user,
       port:     cfg.port,
+      user:     cfg.user,
       password: cfg.password,
       database: cfg.database,
       typeCast: false
     });
-    
     conn.query("DROP TABLE IF EXISTS " + cfg.test_table)
         .on('error', function(err) {
           console.error(err);
+          process.exit();
         });
     conn.query(cfg.create_table_query)
         .on('error', function(err) {
           console.error(err);
+          process.exit();
         })
         .on('end', function() {
           total_time = (Date.now() - start_time) / 1000;
@@ -148,6 +151,7 @@ exports.run = function (callback, cfg) {
       console.error('stderr: ' + inspect(data));
     });
     proc.on(exitEvent, function() {
+      console.log(out);
       callback(JSON.parse(out));
     });
     proc.stdin.end(JSON.stringify(cfg));

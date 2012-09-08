@@ -73,9 +73,7 @@ if (!module.parent) {
       i += 1;
       if (i <= cfg.reconnect_count) {
         conn.close().on('end', function () {
-          util.debug("Close " + i);
           conn.auth(cfg.database, cfg.user, cfg.password).on('end', function (s) {
-            util.debug("Auth " + i);
             reconnectAsync();
           });
         });
