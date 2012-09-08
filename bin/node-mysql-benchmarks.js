@@ -17,27 +17,35 @@ var
     , 'mariasql'
     ],
   util = require('util'),
+  ArgumentParser = require('argparse').ArgumentParser,
   Table = require('cli-table'),
-  default_factor = 1,
-  factor,
-  cfg,
-  binding_filter,
   results = {};
 
-factor = default_factor;
-if (process.argv[2] !== undefined) {
-  factor = Math.abs(process.argv[2]);
-  
-  if (isNaN(factor)) {
-    factor = default_factor;
+var parser = new ArgumentParser({
+  description: require('../package.json').description,
+  version: require('../package.json').version,
+  addHelp: true
+});
+parser.addArgument(
+  [ '-f', '--factor' ],
+  {
+    action: 'store',
+    defaultValue: 1,
+    type: 'float',
+    help: 'Factor to change benchmark operations number (default: 1).'
   }
-}
+);
+parser.addArgument(
+  [ '-s', '--skip' ],
+  {
+    action: 'append',
+    defaultValue: [],
+    help: 'Benchmark name to skip.'
+  }
+);
+var args = parser.parseArgs();
 
-if (process.argv[3] !== undefined) {
-  binding_filter = process.argv[3];
-}
-
-cfg = require("../src/config").getConfig(factor);
+var cfg = require("../src/config").getConfig(args.factor);
 
 function printResults() {
   var table = new Table({
@@ -78,13 +86,22 @@ function printResults() {
   console.log(table.toString());
 }
 
+function inArray(what, where) {
+  for (var i = 0, length = where.length; i < length; i++) {
+    if (what == where[i]) {
+      return true;
+    }
+  }
+  return false;
+}
+
 function runNextBenchmark() {
   if (bindings_list.length > 0) {
     var
       binding_name = bindings_list.shift(),
       benchmark = require("../src/" + binding_name);
-    
-    if (!binding_filter || (binding_name.match(binding_filter))) {
+
+    if (args.skip.length == 0 || inArray(binding_name, args.skip)) {
       util.print("Benchmarking " + binding_name + "... ");
       
       benchmark.run(function (binding_results) {
@@ -105,5 +122,5 @@ function runNextBenchmark() {
   }
 }
 
-util.puts("\u001B[1mBenchmarking...\u001B[22m");
+util.puts("\u001B[1mBenchmarking with factor " + args.factor + "...\u001B[22m");
 runNextBenchmark();

@@ -12,10 +12,11 @@ var
 
 exports.run = function (callback, cfg) {
   setTimeout(function() {
-    process.stdout.write('starting ... ');
     var
       proc,
       results = '';
+
+    process.stdout.write('starting ... ');
 
     proc = spawn('src/benchmark.php');
     
@@ -31,7 +32,7 @@ exports.run = function (callback, cfg) {
       console.error('stderr: ' + inspect(data));
     });
 
-    proc.on('exit', function (code) {
+    proc.on(exitEvent, function (code) {
       try {
         results = JSON.parse(results);
       } catch (e) {}
