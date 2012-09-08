@@ -17,7 +17,7 @@ exports.run = function (callback, cfg) {
     key,
     results = '';
 
-  process.stdout.write('starting ... ');
+  process.stdout.write('Starting... ');
 
   for (key in cfg) {
     if (cfg.hasOwnProperty(key)) {

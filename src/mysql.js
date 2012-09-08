@@ -137,7 +137,7 @@ if (!module.parent) {
 
 exports.run = function (callback, cfg) {
   setTimeout(function() {
-    process.stdout.write('starting ... ');
+    process.stdout.write('Starting... ');
     var proc = require('child_process').spawn('node', [__filename]),
         exitEvent = (process.versions.node >= '0.8.0' ? 'close' : 'exit'),
         inspect = require('util').inspect,
@@ -151,7 +151,6 @@ exports.run = function (callback, cfg) {
       console.error('stderr: ' + inspect(data));
     });
     proc.on(exitEvent, function() {
-      console.log(out);
       callback(JSON.parse(out));
     });
     proc.stdin.end(JSON.stringify(cfg));

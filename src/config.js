@@ -7,13 +7,13 @@
 /*
 > mysql -u root
 CREATE DATABASE test DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci;
-GRANT ALL ON test.* TO test@localhost IDENTIFIED BY "";
+GRANT ALL PRIVILEGES ON test.* TO 'test'@'127.0.0.1' IDENTIFIED BY '';
 */
 
 exports.getConfig = function (factor) {
   var cfg = {
     // Database connection settings
-    host: "localhost",
+    host: "127.0.0.1",
     port: 3306,
     user: "test",
     password: "",

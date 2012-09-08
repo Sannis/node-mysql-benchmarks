@@ -218,7 +218,7 @@ if (!module.parent) {
 
 exports.run = function (callback, cfg) {
   setTimeout(function() {
-    process.stdout.write('starting ... ');
+    process.stdout.write('Starting... ');
     var proc = require('child_process').spawn('node', [__filename]),
         exitEvent = (process.versions.node >= '0.8.0' ? 'close' : 'exit'),
         inspect = require('util').inspect,
