@@ -49,8 +49,8 @@ var cfg = require("../src/config").getConfig(args.factor);
 
 function printResults() {
   var table = new Table({
-    head: ["Author and module name", "Init", "Escapes", "Reconnects", "Inserts", "Selects"],
-    colWidths: [34, 7, 11, 12, 9, 9],
+    head: ["Module name", "Init", "Escapes", "Reconnects", "Inserts", "Selects"],
+    colWidths: [22, 7, 11, 12, 9, 9],
     chars: {
       'top': '-',
       'top-mid':'+',
@@ -82,8 +82,9 @@ function printResults() {
   }
   
   // Output results
-  util.puts("\n\u001B[1mResults (init time in seconds, other values are operations per second):\u001B[22m");
+  util.puts("\n\u001B[1mResults:\u001B[22m");
   console.log(table.toString());
+  util.puts("\u001B[1mInit time in seconds (less is better), other values are operations per second (more is better).\u001B[22m");
 }
 
 function inArray(what, where) {
