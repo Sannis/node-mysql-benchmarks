@@ -5,9 +5,6 @@
  * See license text in LICENSE file
  */
 
-// Dirty fix for mysql-native on Node.js v0.8.x
-require('sys-not-throw');
-
 var
   bindings_list =
     [ 'C'
