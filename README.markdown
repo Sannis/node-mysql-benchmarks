@@ -3,13 +3,13 @@ Benchmarks for MySQL bindings for Node.js
 
 You can install this via npm:
 
-    #> npm install -g mysql-bindings-benchmark
+    #> npm install -g mysql-benchmarks
 
 And run:
 
-    $> node-mysql-bindings-benchmark
+    $> node-mysql-benchmarks
 
-Github repo: http://github.com/Sannis/node-mysql-bindings-benchmarks
+Github repo: http://github.com/Sannis/node-mysql-benchmarks
 
 
 Supported MySQL bindings
@@ -28,7 +28,7 @@ Benchmark results
 -----------------
 
 Some of my (Sannis') benchmark results:
-<https://github.com/Sannis/node-mysql-bindings-benchmarks/wiki>.
+<https://github.com/Sannis/node-mysql-benchmarks/wiki>.
 
 
 Contributing

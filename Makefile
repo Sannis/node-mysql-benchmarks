@@ -27,6 +27,6 @@ lint: dependencies
 		./node_modules/.bin/nodelint ./bin/*
 
 benchmark: build
-		./bin/node-mysql-bindings-benchmark.js
+		./bin/node-mysql-benchmarks.js
 
 .PHONY: all rebuild clean clean-all build lint benchmark
