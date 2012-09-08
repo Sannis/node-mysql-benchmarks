@@ -101,7 +101,7 @@ if (!module.parent) {
       user:     cfg.user,
       password: cfg.password,
       database: cfg.database,
-      typeCast: false
+      typeCast: true
     });
     conn.query("DROP TABLE IF EXISTS " + cfg.test_table)
         .on('error', function(err) {
