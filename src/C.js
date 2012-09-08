@@ -17,6 +17,8 @@ exports.run = function (callback, cfg) {
     key,
     results = '';
 
+  process.stdout.write('starting ... ');
+
   for (key in cfg) {
     if (cfg.hasOwnProperty(key)) {
       args.push('--' + key);
@@ -29,7 +31,7 @@ exports.run = function (callback, cfg) {
     }
   }
 
-  proc = spawn(__dirname + '/../benchmark', args);
+  proc = spawn(__dirname + '/../build/benchmark-cpp', args);
 
   proc.stdout.on('data', function (data) {
     results += data;

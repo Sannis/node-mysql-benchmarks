@@ -15,7 +15,7 @@ build: build-stamp dependencies
 
 build-stamp: ./src/*.cc ./src/*.h
 		touch build-stamp
-		node-waf configure build
+		./build.sh
 
 dependencies: dependencies-stamp
 

@@ -18,7 +18,7 @@ exports.run = function (callback, cfg) {
 
     process.stdout.write('starting ... ');
 
-    proc = spawn('src/benchmark.php');
+    proc = spawn('src/other/benchmark.php');
     
     proc.stdout.on('data', function (data) {
       results += data;
