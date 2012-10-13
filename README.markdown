@@ -1,41 +1,37 @@
-Benchmarks for MySQL bindings for Node.js
-=========================================
+Benchmarks for MySQL modules for Node.js
+========================================
 
 You can install this via npm:
 
-    #> npm install -g mysql-bindings-benchmark
+    # npm install -g https://github.com/mscdex/node-mysql-benchmarks/tarball/master
 
 And run:
 
-    $> node-mysql-bindings-benchmark
-
-Github repo: http://github.com/Sannis/node-mysql-bindings-benchmarks
+    # node-mysql-benchmark
 
 
-Supported MySQL bindings
-------------------------
+Supported MySQL modules
+-----------------------
 
 * https://github.com/Sannis/node-mysql-libmysqlclient
 * https://github.com/felixge/node-mysql
 * https://github.com/sidorares/nodejs-mysql-native
 * https://github.com/mariano/node-db-mysql
-* https://github.com/w1nk/node-odbc
+* https://github.com/mscdex/mariasql
 
-Also includes benchmarks written in PHP and C++.
+Also included are benchmarks written in PHP and C++.
 
 
 Benchmark results
 -----------------
 
-Some of my (Sannis') benchmark results:
-<https://github.com/Sannis/node-mysql-bindings-benchmarks/wiki>.
+Some benchmark results are available [here](http://mscdex.github.com/node-mysql-benchmarks).
 
 
 Contributing
 ------------
 
-To contribute any patches, simply fork this repository using GitHub
-and send a pull request to me (http://github.com/Sannis). Thanks!
+Pull requests are welcome.
 
 
 License
@@ -43,6 +39,4 @@ License
 
 MIT License. See license text in file LICENSE.
 
-Bindings licenses you can read in their repositories.
-At this moment all of them are MIT-licensed.
-
+Individual module licenses can be found at their respective repositories.

@@ -16,7 +16,6 @@ var
     , 'mysql'
     , 'mysql-libmysqlclient'
     , 'mysql-native'
-    , 'odbc'
     , 'mariasql'
     ],
   util = require('util'),

@@ -1,45 +1,38 @@
-{ "name" : "mysql-bindings-benchmarks"
-, "description" : "Node.js MySQL bindings benchmarks"
-, "keywords" : ["mysql", "sql", "database", "benchmark", "odbc", "rdbs"]
-, "homepage" : "http://sannis.github.com/node-mysql-bindings-benchmarks"
-, "version" : "0.2.1"
-, "author" :
-  { "name": "Oleg Efimov"
-  , "email": "efimovov@gmail.com"
-  }
-, "contributors" :
-  [ { "name": "Oleg Efimov"
-    , "email": "efimovov@gmail.com"
-    }
-  , { "name": "Dan VerWeire"
-    , "email": "dverweire@gmail.com"
-    }
-  ]
-, "bugs" : { "url" : "http://github.com/Sannis/node-mysql-bindings-benchmarks/issues" }
-, "licenses" : [ { "type" : "MIT" } ]
-, "repository" :
-  { "type" : "git"
-  , "url" : "http://github.com/Sannis/node-mysql-bindings-benchmarks.git"
-  }
-, "bin" :
-  { "node-mysql-bindings-benchmark" : "./bin/node-mysql-bindings-benchmark.js"
-  }
-, "scripts" :
-  { "install" : "sh build.sh"
-  , "test" : "./bin/node-mysql-bindings-benchmark.js"
-  }
-, "engines" : { "node" : ">=0.6.x" }
-, "dependencies" :
-  { "cli-table" : ">=0.0.1"
-  , "sys-not-throw" : ">=1.0.1"
-  , "mysql" : "2.0.0-alpha3"
-  , "mysql-libmysqlclient" : "1.3.3"
-  , "mysql-native" : "0.4.4"
-  , "db-mysql" : "0.7.6"
-  , "odbc" : "0.3.1"
-  , "mariasql" : "0.0.2"
-  }
-, "devDependencies" :
-  { "nodelint" : "*"
+{ "name": "mysql-benchmarks",
+  "description": "Node.js MySQL module benchmarks",
+  "keywords": ["mysql", "sql", "database", "benchmark", "rdbs"],
+  "homepage": "https://github.com/mscdex/node-mysql-benchmarks",
+  "version": "0.3.0",
+  "author": {
+    "name": "Oleg Efimov",
+    "email": "efimovov@gmail.com"
+  },
+  "contributors": [
+    { "name": "Dan VerWeire",
+      "email": "dverweire@gmail.com"
+    },
+    { "name": "Brian White" }
+  ],
+  "bugs": { "url" : "http://github.com/mscdex/node-mysql-benchmarks/issues" },
+  "licenses": [ { "type" : "MIT" } ],
+  "repository": {
+    "type" : "git",
+    "url" : "http://github.com/Sannis/node-mysql-benchmarks.git"
+  },
+  "bin": {
+    "node-mysql-benchmark" : "./bin/node-mysql-benchmark.js"
+  },
+  "scripts": {
+    "install" : "sh build.sh",
+    "test" : "./bin/node-mysql-benchmark.js"
+  },
+  "engines": { "node" : ">=0.8.x" },
+  "dependencies": {
+    "cli-table" : ">=0.0.1",
+    "mysql" : "2.0.0-alpha3",
+    "mysql-libmysqlclient" : "1.5.1",
+    "mysql-native" : "0.4.7",
+    "db-mysql" : "0.7.6",
+    "mariasql" : "0.1.8"
   }
 }
