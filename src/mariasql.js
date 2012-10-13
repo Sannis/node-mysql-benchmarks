@@ -10,10 +10,9 @@ if (!module.parent) {
       conn;
 
   function selectAsyncBenchmark(results, callback, cfg) {
-    var
-      start_time,
-      total_time;
-    
+    var start_time,
+        total_time;
+
     start_time = Date.now();
 
     var rows = [];
@@ -43,15 +42,14 @@ if (!module.parent) {
   }
 
   function insertAsyncBenchmark(results, callback, cfg) {
-    var
-      start_time,
-      total_time,
-      i = 0;
-    
+    var start_time,
+        total_time,
+        i = 0;
+
     start_time = Date.now();
-    
+
     function insertAsync() {
-      i += 1;
+      ++i;
       if (i <= cfg.insert_rows_count) {
         conn.query(cfg.insert_query)
             .on('result', function(r) {
@@ -65,43 +63,40 @@ if (!module.parent) {
             });
       } else {
         total_time = (Date.now() - start_time) / 1000;
-        
+
         results['inserts'] = Math.round(cfg.insert_rows_count / total_time)
-        
+
         setTimeout(function () {
           selectAsyncBenchmark(results, callback, cfg);
         }, cfg.delay_before_select);
       }
     }
-    
+
     insertAsync();
   }
 
   function escapeBenchmark(results, callback, cfg) {
-    var
-      start_time,
-      total_time,
-      i = 0,
-      escaped_string;
-    
+    var start_time,
+        total_time,
+        i,
+        escaped_string;
+
     start_time = Date.now();
-    
-    for (i = 0; i < cfg.escape_count; i += 1) {
+
+    for (i = 0; i < cfg.escape_count; ++i)
       escaped_string = conn.escape(cfg.string_to_escape);
-    }
-    
+
     total_time = (Date.now() - start_time) / 1000;
-    
+
     results['escapes'] = Math.round(cfg.escape_count / total_time)
-    
+
     insertAsyncBenchmark(results, callback, cfg);
   }
 
   function startBenchmark(results, callback, cfg) {
-    var
-      start_time,
-      total_time;
-    
+    var start_time,
+        total_time;
+
     start_time = Date.now();
 
     conn = new Client();
@@ -113,7 +108,7 @@ if (!module.parent) {
       db: cfg.database
     });
 
-    
+
     conn.query('DROP TABLE IF EXISTS ' + cfg.test_table)
         .on('error', function(err) {
           console.error(err);

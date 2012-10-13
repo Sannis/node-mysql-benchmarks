@@ -5,10 +5,9 @@
  */
 
 // Require modules
-var
-  spawn = require('child_process').spawn,
-  inspect = require('util').inspect,
-  exitEvent = (process.versions.node >= '0.8.0' ? 'close' : 'exit');
+var spawn = require('child_process').spawn,
+    inspect = require('util').inspect,
+    exitEvent = (process.versions.node >= '0.8.0' ? 'close' : 'exit');
 
 exports.run = function (callback, cfg) {
   var
@@ -21,11 +20,10 @@ exports.run = function (callback, cfg) {
     if (cfg.hasOwnProperty(key)) {
       args.push('--' + key);
       
-      if (typeof cfg[key] === 'boolean') {
+      if (typeof cfg[key] === 'boolean')
         args.push(cfg[key] ? '1' : '0');
-      } else if (typeof cfg[key] !== 'object') {
+      else if (typeof cfg[key] !== 'object')
         args.push(cfg[key]);
-      }
     }
   }
 
@@ -37,9 +35,8 @@ exports.run = function (callback, cfg) {
 
   proc.stderr.setEncoding('utf8');
   proc.stderr.on('data', function (data) {
-    if (/^execvp\(\)/.test(data.toString('ascii'))) {
+    if (/^execvp\(\)/.test(data.toString('ascii')))
       console.error("Failed to start child process for C++ benchmark.");
-    }
     console.error('stderr: ' + inspect(data));
   });
 
