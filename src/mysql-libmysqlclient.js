@@ -39,7 +39,7 @@ if (!module.parent) {
     });
   }
 
-  function fetchObjectLoopSyncBenchmark(results, callback, cfg) {
+  function fetchRowLoopSyncBenchmark(results, callback, cfg) {
     var
       start_time,
       total_time,
@@ -47,28 +47,28 @@ if (!module.parent) {
       res,
       row,
       rows = [];
-    
+
     start_time = Date.now();
-    
+
     res = conn.querySync("SELECT * FROM " + cfg.test_table + ";");
     if (!res) {
       console.error("Query error " + conn.errnoSync() + ": " + conn.errorSync());
     }
-    
-    row = res.fetchObjectSync();
-    
+
+    row = res.fetchRowSync();
+
     while (row) {
       rows.push(row);
-      
-      row = res.fetchObjectSync();
+
+      row = res.fetchRowSync();
     }
-    
+
     res.freeSync();
-    
+
     total_time = (Date.now() - start_time) / 1000;
-    
+
     results['selectsWAT'] = Math.round(cfg.insert_rows_count / total_time);
-    
+
     fetchAllAsyncBenchmark(results, callback, cfg);
   }
 
@@ -97,7 +97,7 @@ if (!module.parent) {
         results['inserts'] = Math.round(cfg.insert_rows_count / total_time);
         
         setTimeout(function () {
-          fetchObjectLoopSyncBenchmark(results, callback, cfg);
+          fetchRowLoopSyncBenchmark(results, callback, cfg);
         }, cfg.delay_before_select);
       }
     }
