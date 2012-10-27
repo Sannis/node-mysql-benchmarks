@@ -13,7 +13,7 @@ clean-all: clean
 
 build: build-stamp dependencies
 
-build-stamp: ./src/*.cc ./src/*.h
+build-stamp: ./src/other/*.cc ./src/other/*.h
 		touch build-stamp
 		./build.sh
 
