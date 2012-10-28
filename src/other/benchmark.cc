@@ -169,7 +169,7 @@ int main(int argc, char *argv[])
         {"test_table", required_argument, NULL, 0},
         {"create_table_query", required_argument, NULL, 0},
         {"select_query", required_argument, NULL, 0},
-        {"escape_count", required_argument, NULL, 0},
+        {"escapes_count", required_argument, NULL, 0},
         {"string_to_escape", required_argument, NULL, 0},
         {"reconnect_count", required_argument, NULL, 0},
         {"insert_rows_count", required_argument, NULL, 0},
@@ -202,7 +202,7 @@ int main(int argc, char *argv[])
     do_benchmark(do_benchmark_initialization, "init", count);
 
     // Benchmark 1: Escapes
-    count = atol(cfg["escape_count"].c_str());
+    count = atol(cfg["escapes_count"].c_str());
     do_benchmark(do_benchmark_escape_string, "escapes", count);
 
     // Benchmark 2: Reconnects

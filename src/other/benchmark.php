@@ -80,13 +80,13 @@ function do_benchmark_escapes()
     
     $start = microtime(true);
 
-    for ($i = 0; $i < $cfg['escape_count']; $i++) {
+    for ($i = 0; $i < $cfg['escapes_count']; $i++) {
         $escaped_string = mysql_real_escape_string($cfg['string_to_escape'], $conn);
     }
     
     $finish = microtime(true);
     
-    return round($cfg['escape_count']/($finish - $start), 0);
+    return round($cfg['escapes_count']/($finish - $start), 0);
 }
 
 function do_benchmark_init()
@@ -98,7 +98,7 @@ function do_benchmark_init()
     $conn = mysql_connect("{$cfg['host']}:{$cfg['port']}", $cfg['user'], $cfg['password']);
     mysql_select_db($cfg['database'], $conn);
     
-    mysql_query("DROP TABLE IF EXISTS ".$cfg['test_table']);
+    mysql_query("DROP TABLE IF EXISTS " . $cfg['test_table']);
     mysql_query($cfg['create_table_query']);
     
     $finish = microtime(true);

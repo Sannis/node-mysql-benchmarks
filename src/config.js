@@ -12,6 +12,19 @@ GRANT ALL PRIVILEGES ON test.* TO 'test'@'127.0.0.1' IDENTIFIED BY '';
 
 "use strict";
 
+function addBenchmark(cfg, module, async, typeCast, name) {
+  if (!name) {
+    name = module;
+  }
+  cfg.benchmarksO[name] = {
+    name:     name,
+    module:   module,
+    async:    async,
+    typeCast: typeCast
+  };
+  cfg.benchmarksA.push(cfg.benchmarksO[name]);
+}
+
 exports.getConfig = function (factor) {
   var cfg = {
     // Database connection settings
@@ -23,13 +36,13 @@ exports.getConfig = function (factor) {
     test_table: "test_table",
 
     // Benchmarks parameters
-    escape_count: 1000000 * factor,
+    escapes_count: 1000000 * factor,
     string_to_escape: "str\\str\"str\'str\x00str",
     reconnect_count: 1000 * factor,
     insert_rows_count: 10000 * factor,
 
     // Delay before assertion check (ms)
-    delay_before_select: 1000,
+    delay_before_select: 10000 * factor,
     cooldown: 10000 * factor
   };
 
@@ -41,6 +54,20 @@ exports.getConfig = function (factor) {
                      " VALUES (1, 'hello', 3.141)";
 
   cfg.select_query = "SELECT * FROM " + cfg.test_table;
+
+  cfg.benchmarksA = [];
+  cfg.benchmarksO = {};
+
+  addBenchmark(cfg, "C",                    false, false);
+  addBenchmark(cfg, "PHP",                  false, false);
+  addBenchmark(cfg, "db-mysql",             false, false);
+  addBenchmark(cfg, "mysql",                true,  true,  "mysql");
+  addBenchmark(cfg, "mysql",                true,  false, "mysql *");
+  addBenchmark(cfg, "mysql-libmysqlclient", true,  true,  "mysql-libmysqlclient");
+  addBenchmark(cfg, "mysql-libmysqlclient", false, true,  "mysql-libmysqlclient *");
+  addBenchmark(cfg, "mysql-native",         false, false);
+  addBenchmark(cfg, "mariasql",             true,  false);
+  addBenchmark(cfg, "odbc",                 false, false);
 
   return cfg;
 };

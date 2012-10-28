@@ -80,13 +80,13 @@ function benchmark () {
     
     start_time = Date.now();
     
-    for (i = 0; i < cfg.escape_count; i += 1) {
+    for (i = 0; i < cfg.escapes_count; i += 1) {
       escaped_string = conn.escape(cfg.string_to_escape);
     }
     
     total_time = (Date.now() - start_time) / 1000;
     
-    results['escapes'] = Math.round(cfg.escape_count / total_time);
+    results['escapes'] = Math.round(cfg.escapes_count / total_time);
     
     insertAsyncBenchmark(results, callback, cfg);
   }

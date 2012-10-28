@@ -11,7 +11,7 @@ function benchmark() {
   var mysql = require('mysql'),
       conn;
 
-  function selectAsyncBenchmark(results, callback, cfg) {
+  function selectAsyncBenchmark(results, callback, cfg, benchmark) {
     var
       start_time,
       total_time;
@@ -40,7 +40,7 @@ function benchmark() {
         });
   }
 
-  function insertAsyncBenchmark(results, callback, cfg) {
+  function insertAsyncBenchmark(results, callback, cfg, benchmark) {
     var
       start_time,
       total_time,
@@ -63,7 +63,7 @@ function benchmark() {
         results['inserts'] = Math.round(cfg.insert_rows_count / total_time)
         
         setTimeout(function () {
-          selectAsyncBenchmark(results, callback, cfg);
+          selectAsyncBenchmark(results, callback, cfg, benchmark);
         }, cfg.delay_before_select);
       }
     }
@@ -71,7 +71,7 @@ function benchmark() {
     insertAsync();
   }
 
-  function escapeBenchmark(results, callback, cfg) {
+  function escapeBenchmark(results, callback, cfg, benchmark) {
     var
       start_time,
       total_time,
@@ -80,18 +80,18 @@ function benchmark() {
     
     start_time = Date.now();
     
-    for (i = 0; i < cfg.escape_count; i += 1) {
+    for (i = 0; i < cfg.escapes_count; i += 1) {
       escaped_string = conn.escape(cfg.string_to_escape);
     }
     
     total_time = (Date.now() - start_time) / 1000;
     
-    results['escapes'] = Math.round(cfg.escape_count / total_time)
+    results['escapes'] = Math.round(cfg.escapes_count / total_time)
     
-    insertAsyncBenchmark(results, callback, cfg);
+    insertAsyncBenchmark(results, callback, cfg, benchmark);
   }
 
-  function startBenchmark(results, callback, cfg) {
+  function initBenchmark(results, callback, cfg, benchmark) {
     var
       start_time,
       total_time;
@@ -104,7 +104,7 @@ function benchmark() {
       user:     cfg.user,
       password: cfg.password,
       database: cfg.database,
-      typeCast: true
+      typeCast: benchmark.typeCast
     });
     conn.query("DROP TABLE IF EXISTS " + cfg.test_table)
         .on('error', function(err) {
@@ -119,7 +119,7 @@ function benchmark() {
         .on('end', function() {
           total_time = (Date.now() - start_time) / 1000;
           results['init'] = total_time;
-          escapeBenchmark(results, callback, cfg);
+          escapeBenchmark(results, callback, cfg, benchmark);
         });
   }
 
@@ -133,7 +133,9 @@ function benchmark() {
         callback = function() {
           process.stdout.write(JSON.stringify(results));
         };
-    startBenchmark(results, callback, JSON.parse(cfg));
+
+    cfg = JSON.parse(cfg);
+    initBenchmark(results, callback, cfg, cfg.benchmark);
   });
   process.stdin.resume();
 }
@@ -142,6 +144,6 @@ if (!module.parent) {
   benchmark();
 }
 
-exports.run = function (callback, cfg) {
-  require('./helper').spawnBenchmark('node', [__filename], callback, cfg);
+exports.run = function (callback, cfg, benchmark) {
+  require('./helper').spawnBenchmark('node', [__filename], callback, cfg, benchmark);
 };

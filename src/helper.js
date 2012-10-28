@@ -6,7 +6,7 @@
 
 "use strict";
 
-exports.spawnBenchmark = function (file, args, callback, cfg) {
+exports.spawnBenchmark = function (file, args, callback, cfg, benchmark) {
   var child = require('child_process').spawn(file, args),
     exitEvent = (require('semver').gt(process.versions.node, '0.8.0') ? 'close' : 'exit'),
     out = '';
@@ -25,5 +25,8 @@ exports.spawnBenchmark = function (file, args, callback, cfg) {
   child.on(exitEvent, function () {
     callback(JSON.parse(out));
   });
+  if (benchmark) {
+    cfg.benchmark = benchmark;
+  }
   child.stdin.end(JSON.stringify(cfg));
 };

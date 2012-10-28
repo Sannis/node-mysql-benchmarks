@@ -8,16 +8,6 @@
 "use strict";
 
 var
-  bindings_list = [
-    'C',
-    'PHP',
-    'db-mysql',
-    'mysql',
-    'mysql-libmysqlclient',
-    'mysql-native',
-    'odbc',
-    'mariasql'
-  ],
   util = require('util'),
   ArgumentParser = require('argparse').ArgumentParser,
   Table = require('cli-table'),
@@ -43,7 +33,7 @@ parser.addArgument(
   {
     action: 'append',
     defaultValue: [],
-    help: 'Benchmark name to skip.'
+    help: 'Module to skip.'
   }
 );
 parser.addArgument(
@@ -71,8 +61,8 @@ if (args.quiet) {
 
 function printResults() {
   var table = new Table({
-    head: ["Module name", "Init", "Escapes", "Reconnects", "Inserts", "Selects"],
-    colWidths: [22, 7, 11, 12, 9, 9],
+    head: ["Name", "Async", "TypeCast", "Init", "Escapes", "Reconnects", "Inserts", "Selects"],
+    colWidths: [30, 7, 10, 7, 11, 12, 9, 9],
     chars: {
       'top': '-',
       'top-mid':'+',
@@ -95,6 +85,10 @@ function printResults() {
     if (results.hasOwnProperty(name)) {
       table.push([
         name,
+
+        cfg.benchmarksO[name].async    ? 'V' : '',
+        cfg.benchmarksO[name].typeCast ? 'V' : '',
+
         results[name].init       || '-',
         results[name].escapes    || '-',
         results[name].reconnects || '-',
@@ -107,7 +101,7 @@ function printResults() {
   // Output results
   util.print("\n\u001B[1mResults:\u001B[22m\n");
   console.log(table.toString());
-  util.print("\u001B[1mInit time in seconds (less is better), other values are operations per second (more is better).\u001B[22m\n");
+  util.print("\u001B[1mInit time in seconds (doesn't matter), other values are operations/rows per second (more is better).\u001B[22m\n");
 }
 
 function inArray(what, where) {
@@ -119,32 +113,34 @@ function inArray(what, where) {
   return false;
 }
 
+var benchmarksA = cfg.benchmarksA;
+
 function runNextBenchmark() {
-  if (bindings_list.length > 0) {
-    var
-      binding_name = bindings_list.shift(),
-      benchmark = require("../src/" + binding_name);
+  if (benchmarksA.length > 0) {
+    var benchmark = benchmarksA.shift();
 
-    if (args.skip.length === 0 || !inArray(binding_name, args.skip)) {
-      printProgress("Benchmarking " + binding_name + "... ");
+    if (args.skip.length === 0 || !inArray(benchmark.module, args.skip)) {
+      printProgress("Benchmarking '" + benchmark.name + "'... ");
 
-      benchmark.run(function (binding_results) {
+      require("../src/" + benchmark.module).run(function (benchmark_results) {
         printProgress("Done.\n");
-        results[binding_name] = binding_results;
+        results[benchmark.name] = benchmark_results;
 
         printProgress("Cooldown...\n");
-        setTimeout(function () {
-          runNextBenchmark();
-        }, cfg.cooldown);
-      }, cfg);
+        if (benchmarksA.length > 0) {
+          setTimeout(function () {
+            runNextBenchmark();
+          }, cfg.cooldown);
+        } else {
+          printResults();
+        }
+      }, cfg, benchmark);
     } else {
-      printProgress("Skipping " + binding_name + ".\n");
-      
+      printProgress("Skipping '" + benchmark.name + "'.\n");
+
       runNextBenchmark();
     }
   } else {
-    printProgress("\u001B[1mAll benchmarks finished.\u001B[22m\n");
-    
     printResults();
   }
 }

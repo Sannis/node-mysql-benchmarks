@@ -12,13 +12,11 @@ function benchmark() {
     mysql = require('mysql-libmysqlclient'),
     conn;
 
-  function fetchAllAsyncBenchmark(results, callback, cfg) {
+  function selectAsyncBenchmark(results, callback, cfg, benchmark) {
     var
       start_time,
       total_time,
-      factor = cfg.do_not_run_sync_if_async_exists ? 1 : 2,
-      res,
-      rows;
+      res;
     
     start_time = Date.now();
     
@@ -42,40 +40,7 @@ function benchmark() {
     });
   }
 
-  function fetchRowLoopSyncBenchmark(results, callback, cfg) {
-    var
-      start_time,
-      total_time,
-      factor = cfg.do_not_run_sync_if_async_exists ? 1 : 2,
-      res,
-      row,
-      rows = [];
-
-    start_time = Date.now();
-
-    res = conn.querySync("SELECT * FROM " + cfg.test_table + ";");
-    if (!res) {
-      console.error("Query error " + conn.errnoSync() + ": " + conn.errorSync());
-    }
-
-    row = res.fetchRowSync();
-
-    while (row) {
-      rows.push(row);
-
-      row = res.fetchRowSync();
-    }
-
-    res.freeSync();
-
-    total_time = (Date.now() - start_time) / 1000;
-
-    results['selectsWAT'] = Math.round(cfg.insert_rows_count / total_time);
-
-    fetchAllAsyncBenchmark(results, callback, cfg);
-  }
-
-  function insertAsyncBenchmark(results, callback, cfg) {
+  function insertAsyncBenchmark(results, callback, cfg, benchmark) {
     var
       start_time,
       total_time,
@@ -97,10 +62,10 @@ function benchmark() {
       } else {
         total_time = (Date.now() - start_time) / 1000;
         
-        results['inserts'] = Math.round(cfg.insert_rows_count / total_time);
+        results.inserts = Math.round(cfg.insert_rows_count / total_time);
         
         setTimeout(function () {
-          fetchRowLoopSyncBenchmark(results, callback, cfg);
+          selectAsyncBenchmark(results, callback, cfg, benchmark);
         }, cfg.delay_before_select);
       }
     }
@@ -108,12 +73,34 @@ function benchmark() {
     insertAsync();
   }
 
-  function insertSyncBenchmark(results, callback, cfg) {
+  function selectSyncBenchmark(results, callback, cfg, benchmark) {
     var
       start_time,
       total_time,
-      i = 0,
       res;
+
+    start_time = Date.now();
+
+    res = conn.querySync(cfg.select_query);
+
+    var rows = res.fetchAllSync();
+
+    total_time = (Date.now() - start_time) / 1000;
+
+    results.selects = Math.round(cfg.insert_rows_count / total_time);
+
+    // Close connection
+    conn.closeSync();
+
+    // Finish benchmark
+    callback(results);
+  }
+
+  function insertSyncBenchmark(results, callback, cfg, benchmark) {
+    var
+      start_time,
+      total_time,
+      i;
     
     start_time = Date.now();
     
@@ -126,16 +113,16 @@ function benchmark() {
     
     total_time = (Date.now() - start_time) / 1000;
     
-    results['insertsSync'] = Math.round(cfg.insert_rows_count / total_time);
-    
-    insertAsyncBenchmark(results, callback, cfg);
+    results.inserts = Math.round(cfg.insert_rows_count / total_time);
+
+    selectSyncBenchmark(results, callback, cfg, benchmark);
   }
 
-  function reconnectSyncBenchmark(results, callback, cfg) {
+  function reconnectBenchmark(results, callback, cfg, benchmark) {
     var
       start_time,
       total_time,
-      i = 0;
+      i;
 
     start_time = Date.now();
     
@@ -149,32 +136,36 @@ function benchmark() {
     
     total_time = (Date.now() - start_time) / 1000;
     
-    results['reconnects'] = Math.round(cfg.reconnect_count / total_time);
-    
-    insertSyncBenchmark(results, callback, cfg);
+    results.reconnects = Math.round(cfg.reconnect_count / total_time);
+
+    if (benchmark.async) {
+      insertAsyncBenchmark(results, callback, cfg, benchmark);
+    } else {
+      insertSyncBenchmark(results, callback, cfg, benchmark);
+    }
   }
 
-  function escapeBenchmark(results, callback, cfg) {
+  function escapeBenchmark(results, callback, cfg, benchmark) {
     var
       start_time,
       total_time,
-      i = 0,
+      i,
       escaped_string;
 
     start_time = Date.now();
     
-    for (i = 0; i < cfg.escape_count; i += 1) {
+    for (i = 0; i < cfg.escapes_count; i += 1) {
       escaped_string = conn.escapeSync(cfg.string_to_escape);
     }
     
     total_time = (Date.now() - start_time) / 1000;
     
-    results['escapes'] = Math.round(cfg.escape_count / total_time);
+    results.escapes = Math.round(cfg.escapes_count / total_time);
     
-    reconnectSyncBenchmark(results, callback, cfg);
+    reconnectBenchmark(results, callback, cfg, benchmark);
   }
 
-  function startBenchmark(results, callback, cfg) {
+  function initBenchmark(results, callback, cfg, benchmark) {
     var
       start_time,
       total_time;
@@ -199,9 +190,9 @@ function benchmark() {
     
     total_time = (Date.now() - start_time) / 1000;
     
-    results['init'] = total_time;
+    results.init = total_time;
     
-    escapeBenchmark(results, callback, cfg);
+    escapeBenchmark(results, callback, cfg, benchmark);
   }
 
   var cfg = '';
@@ -214,7 +205,9 @@ function benchmark() {
         callback = function() {
           process.stdout.write(JSON.stringify(results));
         };
-    startBenchmark(results, callback, JSON.parse(cfg));
+
+    cfg = JSON.parse(cfg);
+    initBenchmark(results, callback, cfg, cfg.benchmark);
   });
   process.stdin.resume();
 }
@@ -223,6 +216,6 @@ if (!module.parent) {
   benchmark();
 }
 
-exports.run = function (callback, cfg) {
-  require('./helper').spawnBenchmark('node', [__filename], callback, cfg);
+exports.run = function (callback, cfg, benchmark) {
+  require('./helper').spawnBenchmark('node', [__filename], callback, cfg, benchmark);
 };
