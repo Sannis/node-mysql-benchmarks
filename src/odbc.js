@@ -75,20 +75,23 @@ function benchmark() {
 
     conn.open(options_string, function(error) {
       if (error) {
-        console.error(error);
-        process.exit();
+        results.error = error.message;
+        callback(results);
+        return;
       }
 
       conn.query("DROP TABLE IF EXISTS " + cfg.test_table, function(error, rows) {
         if (error) {
-          console.error(error);
-          process.exit();
+          results.error = error.message;
+          callback(results);
+          return;
         }
 
         conn.query(cfg.create_table_query, function(error, rows) {
           if (error) {
-            console.error(error);
-            process.exit();
+            results.error = error.message;
+            callback(results);
+            return;
           }
 
           results.init = helper.roundWithPrecision(helper.hrtimeDeltaInSeconds(start_hrtime), 3);

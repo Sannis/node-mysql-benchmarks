@@ -23,7 +23,12 @@ exports.spawnBenchmark = function (file, args, callback, cfg, benchmark) {
     console.error('stderr: ' + require('util').inspect(data));
   });
   child.on(exitEvent, function () {
-    callback(JSON.parse(out));
+    if (/^{"error":/.test(out)) {
+      console.error(out);
+      callback({});
+    } else {
+      callback(JSON.parse(out));
+    }
   });
   if (benchmark) {
     cfg.benchmark = benchmark;
