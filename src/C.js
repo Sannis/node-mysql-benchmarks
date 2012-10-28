@@ -4,6 +4,8 @@
  * See license text in LICENSE file
  */
 
+"use strict";
+
 // Require modules
 var
   spawn = require('child_process').spawn,
@@ -16,8 +18,6 @@ exports.run = function (callback, cfg) {
     args = [],
     key,
     results = '';
-
-  process.stdout.write('Starting... ');
 
   for (key in cfg) {
     if (cfg.hasOwnProperty(key)) {
@@ -54,4 +54,3 @@ exports.run = function (callback, cfg) {
     callback(results);
   });
 };
-

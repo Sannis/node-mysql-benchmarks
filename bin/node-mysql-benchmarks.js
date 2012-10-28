@@ -23,6 +23,7 @@ var
   Table = require('cli-table'),
   results = {};
 
+// Parse cli arguments
 var parser = new ArgumentParser({
   description: require('../package.json').description,
   version: require('../package.json').version,
@@ -45,9 +46,28 @@ parser.addArgument(
     help: 'Benchmark name to skip.'
   }
 );
+parser.addArgument(
+  [ '-q', '--quiet' ],
+  {
+    action: 'storeTrue',
+    defaultValue: false,
+    help: 'Be quiet.'
+  }
+);
 var args = parser.parseArgs();
 
+// Get config
 var cfg = require("../src/config").getConfig(args.factor);
+
+// Define progress logger
+var printProgress = function (msg) {
+  util.print(msg);
+};
+if (args.quiet) {
+  printProgress = function (msg) {
+    util.print('.');
+  };
+}
 
 function printResults() {
   var table = new Table({
@@ -85,9 +105,9 @@ function printResults() {
   }
   
   // Output results
-  util.puts("\n\u001B[1mResults:\u001B[22m");
+  util.print("\n\u001B[1mResults:\u001B[22m\n");
   console.log(table.toString());
-  util.puts("\u001B[1mInit time in seconds (less is better), other values are operations per second (more is better).\u001B[22m");
+  util.print("\u001B[1mInit time in seconds (less is better), other values are operations per second (more is better).\u001B[22m\n");
 }
 
 function inArray(what, where) {
@@ -106,25 +126,28 @@ function runNextBenchmark() {
       benchmark = require("../src/" + binding_name);
 
     if (args.skip.length === 0 || !inArray(binding_name, args.skip)) {
-      util.print("Benchmarking " + binding_name + "... ");
-      
+      printProgress("Benchmarking " + binding_name + "... ");
+
       benchmark.run(function (binding_results) {
-        util.print("Done.\n");
+        printProgress("Done.\n");
         results[binding_name] = binding_results;
-        
-        runNextBenchmark();
+
+        printProgress("Cooldown...\n");
+        setTimeout(function () {
+          runNextBenchmark();
+        }, cfg.cooldown);
       }, cfg);
     } else {
-      util.puts("Skipping " + binding_name + ".");
+      printProgress("Skipping " + binding_name + ".\n");
       
       runNextBenchmark();
     }
   } else {
-    util.puts("\u001B[1mAll benchmarks finished.\u001B[22m");
+    printProgress("\u001B[1mAll benchmarks finished.\u001B[22m\n");
     
     printResults();
   }
 }
 
-util.puts("\u001B[1mBenchmarking with factor " + args.factor + "...\u001B[22m");
+util.print("\u001B[1mBenchmarking with factor " + args.factor + "...\u001B[22m\n");
 runNextBenchmark();

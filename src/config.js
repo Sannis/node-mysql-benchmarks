@@ -10,6 +10,8 @@ CREATE DATABASE test DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci;
 GRANT ALL PRIVILEGES ON test.* TO 'test'@'127.0.0.1' IDENTIFIED BY '';
 */
 
+"use strict";
+
 exports.getConfig = function (factor) {
   var cfg = {
     // Database connection settings
