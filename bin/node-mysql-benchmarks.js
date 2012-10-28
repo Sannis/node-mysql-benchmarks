@@ -64,7 +64,7 @@ var printProgress = function (msg) {
   util.print(msg);
 };
 if (args.quiet) {
-  printProgress = function (msg) {
+  printProgress = function () {
     util.print('.');
   };
 }

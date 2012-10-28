@@ -4,7 +4,9 @@
  * See license text in LICENSE file
  */
 
-if (!module.parent) {
+"use strict";
+
+function benchmark() {
   // Require modules
   var
     mysql = require('db-mysql'),
@@ -13,13 +15,11 @@ if (!module.parent) {
   function fetchAllAsyncBenchmark(results, callback, cfg) {
     var
       start_time,
-      total_time,
-      res,
-      rows;
+      total_time;
 
     start_time = Date.now();
 
-    conn.query(cfg.select_query).execute(function(error, result) {
+    conn.query(cfg.select_query).execute(function(error) {
       if (error) {
         console.error(error);
         process.exit();
@@ -27,7 +27,7 @@ if (!module.parent) {
 
       total_time = (Date.now() - start_time) / 1000;
 
-      results['selects'] = Math.round(cfg.insert_rows_count / total_time);
+      results.selects = Math.round(cfg.insert_rows_count / total_time);
 
       // Finish benchmark
       callback(results);
@@ -45,7 +45,7 @@ if (!module.parent) {
     function insertAsync() {
       i += 1;
       if (i <= cfg.insert_rows_count) {
-        conn.query(cfg.insert_query).execute(function(error, result) {
+        conn.query(cfg.insert_query).execute(function(error) {
           if (error) {
             console.error(error);
             process.exit();
@@ -56,7 +56,7 @@ if (!module.parent) {
       } else {
         total_time = (Date.now() - start_time) / 1000;
 
-        results['inserts'] =  Math.round(cfg.insert_rows_count / total_time);
+        results.inserts =  Math.round(cfg.insert_rows_count / total_time);
 
         setTimeout(function () {
           fetchAllAsyncBenchmark(results, callback, cfg);
@@ -71,7 +71,7 @@ if (!module.parent) {
     var
       start_time,
       total_time,
-      i = 0,
+      i,
       escaped_string;
 
     start_time = Date.now();
@@ -82,7 +82,7 @@ if (!module.parent) {
 
     total_time = (Date.now() - start_time) / 1000;
 
-    results['escapes'] = Math.round(cfg.escape_count / total_time);
+    results.escapes = Math.round(cfg.escape_count / total_time);
 
     insertAsyncBenchmark(results, callback, cfg);
   }
@@ -107,13 +107,13 @@ if (!module.parent) {
 
       conn = this;
 
-      conn.query("DROP TABLE IF EXISTS " + cfg.test_table).execute(function(error, rows) {
+      conn.query("DROP TABLE IF EXISTS " + cfg.test_table).execute(function(error) {
         if (error) {
           console.error(error);
           process.exit();
         }
 
-        conn.query(cfg.create_table_query).execute(function(error, rows) {
+        conn.query(cfg.create_table_query).execute(function(error) {
           if (error) {
             console.error(error);
             process.exit();
@@ -121,7 +121,7 @@ if (!module.parent) {
 
           total_time = (Date.now() - start_time) / 1000;
 
-          results['init'] = total_time;
+          results.init = total_time;
 
           escapeBenchmark(results, callback, cfg);
         });
@@ -144,21 +144,10 @@ if (!module.parent) {
   process.stdin.resume();
 }
 
+if (!module.parent) {
+  benchmark();
+}
+
 exports.run = function (callback, cfg) {
-  var proc = require('child_process').spawn('node', [__filename]),
-      exitEvent = (process.versions.node >= '0.8.0' ? 'close' : 'exit'),
-      inspect = require('util').inspect,
-      out = '';
-  proc.stdout.setEncoding('ascii');
-  proc.stdout.on('data', function(data) {
-    out += data;
-  });
-  proc.stderr.setEncoding('utf8');
-  proc.stderr.on('data', function(data) {
-    console.error('stderr: ' + inspect(data));
-  });
-  proc.on(exitEvent, function() {
-    callback(JSON.parse(out));
-  });
-  proc.stdin.end(JSON.stringify(cfg));
+  require('./helper').spawnBenchmark('node', [__filename], callback, cfg);
 };

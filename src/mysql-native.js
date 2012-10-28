@@ -3,7 +3,10 @@
  *
  * See license text in LICENSE file
  */
-if (!module.parent) {
+
+"use strict";
+
+function benchmark() {
   // Require modules
   var
     util = require('util'),
@@ -128,21 +131,10 @@ if (!module.parent) {
   process.stdin.resume();
 }
 
+if (!module.parent) {
+  benchmark();
+}
+
 exports.run = function (callback, cfg) {
-  var proc = require('child_process').spawn('node', [__filename]),
-      exitEvent = (process.versions.node >= '0.8.0' ? 'close' : 'exit'),
-      inspect = require('util').inspect,
-      out = '';
-  proc.stdout.setEncoding('ascii');
-  proc.stdout.on('data', function(data) {
-    out += data;
-  });
-  proc.stderr.setEncoding('utf8');
-  proc.stderr.on('data', function(data) {
-    console.error('stderr: ' + inspect(data));
-  });
-  proc.on(exitEvent, function() {
-    callback(JSON.parse(out));
-  });
-  proc.stdin.end(JSON.stringify(cfg));
+  require('./helper').spawnBenchmark('node', [__filename], callback, cfg);
 };

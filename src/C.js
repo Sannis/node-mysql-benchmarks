@@ -6,18 +6,8 @@
 
 "use strict";
 
-// Require modules
-var
-  spawn = require('child_process').spawn,
-  inspect = require('util').inspect,
-  exitEvent = (process.versions.node >= '0.8.0' ? 'close' : 'exit');
-
 exports.run = function (callback, cfg) {
-  var
-    proc,
-    args = [],
-    key,
-    results = '';
+  var args = [], key;
 
   for (key in cfg) {
     if (cfg.hasOwnProperty(key)) {
@@ -31,26 +21,5 @@ exports.run = function (callback, cfg) {
     }
   }
 
-  proc = spawn(__dirname + '/../build/benchmark-cpp', args);
-
-  proc.stdout.on('data', function (data) {
-    results += data;
-  });
-
-  proc.stderr.setEncoding('utf8');
-  proc.stderr.on('data', function (data) {
-    if (/^execvp\(\)/.test(data.toString('ascii'))) {
-      console.error("Failed to start child process for C++ benchmark.");
-    }
-    console.error('stderr: ' + inspect(data));
-  });
-
-  proc.on(exitEvent, function () {
-    try {
-      results = JSON.parse(results);
-    } catch (e) {}
-    
-    // Finish benchmark
-    callback(results);
-  });
+  require('./helper').spawnBenchmark(__dirname + '/../build/benchmark-cpp', args, callback, cfg);
 };

@@ -34,7 +34,8 @@
 , "engines" : { "node" : ">=0.6.x" }
 , "dependencies" :
   { "cli-table" : ">=0.2.0"
-  , "argparse" : ">=0.1.7"
+  , "argparse":">=0.1.7"
+  , "semver":">=1.1.0"
   , "mysql" : "2.0.0-alpha3"
   , "mysql-libmysqlclient" : "1.5.1"
   , "mysql-native" : "0.4.7"

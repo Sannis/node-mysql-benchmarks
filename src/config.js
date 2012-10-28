@@ -44,4 +44,3 @@ exports.getConfig = function (factor) {
 
   return cfg;
 };
-
