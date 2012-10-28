@@ -5,17 +5,19 @@
  * See license text in LICENSE file
  */
 
+"use strict";
+
 var
-  bindings_list =
-    [ 'C'
-    , 'PHP'
-    , 'db-mysql'
-    , 'mysql'
-    , 'mysql-libmysqlclient'
-    , 'mysql-native'
-    , 'odbc'
-    , 'mariasql'
-    ],
+  bindings_list = [
+    'C',
+    'PHP',
+    'db-mysql',
+    'mysql',
+    'mysql-libmysqlclient',
+    'mysql-native',
+    'odbc',
+    'mariasql'
+  ],
   util = require('util'),
   ArgumentParser = require('argparse').ArgumentParser,
   Table = require('cli-table'),
@@ -71,12 +73,13 @@ function printResults() {
   
   for (name in results) {
     if (results.hasOwnProperty(name)) {
-      table.push([ name
-        , results[name]['init']       || '-'
-        , results[name]['escapes']    || '-'
-        , results[name]['reconnects'] || '-'
-        , results[name]['inserts']    || '-'
-        , results[name]['selects']    || '-'
+      table.push([
+        name,
+        results[name].init       || '-',
+        results[name].escapes    || '-',
+        results[name].reconnects || '-',
+        results[name].inserts    || '-',
+        results[name].selects    || '-'
       ]);
     }
   }
@@ -89,7 +92,7 @@ function printResults() {
 
 function inArray(what, where) {
   for (var i = 0, length = where.length; i < length; i++) {
-    if (what == where[i]) {
+    if (what === where[i]) {
       return true;
     }
   }
@@ -102,7 +105,7 @@ function runNextBenchmark() {
       binding_name = bindings_list.shift(),
       benchmark = require("../src/" + binding_name);
 
-    if (args.skip.length == 0 || inArray(binding_name, args.skip)) {
+    if (args.skip.length === 0 || !inArray(binding_name, args.skip)) {
       util.print("Benchmarking " + binding_name + "... ");
       
       benchmark.run(function (binding_results) {
