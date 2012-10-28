@@ -30,3 +30,14 @@ exports.spawnBenchmark = function (file, args, callback, cfg, benchmark) {
   }
   child.stdin.end(JSON.stringify(cfg));
 };
+
+exports.hrtimeDeltaInSeconds = function (start_hrtime) {
+  var delta_hrtime = process.hrtime(start_hrtime);
+
+  return delta_hrtime[0] + delta_hrtime[1] / 1e9;
+};
+
+exports.roundWithPrecision = function (number, precision) {
+  var multiplier = Math.pow(10, precision);
+  return Math.round(number * multiplier) / multiplier;
+};

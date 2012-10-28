@@ -10,14 +10,13 @@ function benchmark() {
   // Require modules
   var
     mysql = require('db-mysql'),
+    helper = require('./helper'),
     conn;
 
   function fetchAllAsyncBenchmark(results, callback, cfg) {
-    var
-      start_time,
-      total_time;
+    var start_hrtime;
 
-    start_time = Date.now();
+    start_hrtime = process.hrtime();
 
     conn.query(cfg.select_query).execute(function(error) {
       if (error) {
@@ -25,9 +24,7 @@ function benchmark() {
         process.exit();
       }
 
-      total_time = (Date.now() - start_time) / 1000;
-
-      results.selects = Math.round(cfg.insert_rows_count / total_time);
+      results.selects = Math.round(cfg.insert_rows_count / helper.hrtimeDeltaInSeconds(start_hrtime));
 
       // Finish benchmark
       callback(results);
@@ -35,12 +32,9 @@ function benchmark() {
   }
 
   function insertAsyncBenchmark(results, callback, cfg) {
-    var
-      start_time,
-      total_time,
-      i = 0;
+    var start_hrtime, i = 0;
 
-    start_time = Date.now();
+    start_hrtime = process.hrtime();
 
     function insertAsync() {
       i += 1;
@@ -54,9 +48,7 @@ function benchmark() {
           insertAsync();
         });
       } else {
-        total_time = (Date.now() - start_time) / 1000;
-
-        results.inserts =  Math.round(cfg.insert_rows_count / total_time);
+        results.inserts =  Math.round(cfg.insert_rows_count / helper.hrtimeDeltaInSeconds(start_hrtime));
 
         setTimeout(function () {
           fetchAllAsyncBenchmark(results, callback, cfg);
@@ -69,30 +61,25 @@ function benchmark() {
 
   function escapeBenchmark(results, callback, cfg) {
     var
-      start_time,
-      total_time,
+      start_hrtime,
       i,
       escaped_string;
 
-    start_time = Date.now();
+    start_hrtime = process.hrtime();
 
     for (i = 0; i < cfg.escapes_count; i += 1) {
       escaped_string = conn.escape(cfg.string_to_escape);
     }
 
-    total_time = (Date.now() - start_time) / 1000;
-
-    results.escapes = Math.round(cfg.escapes_count / total_time);
+    results.escapes = Math.round(cfg.escapes_count / helper.hrtimeDeltaInSeconds(start_hrtime));
 
     insertAsyncBenchmark(results, callback, cfg);
   }
 
-  function startBenchmark(results, callback, cfg) {
-    var
-      start_time,
-      total_time;
+  function initBenchmark(results, callback, cfg) {
+    var start_hrtime;
 
-    start_time = Date.now();
+    start_hrtime = process.hrtime();
 
     new mysql.Database({
         hostname: cfg.host,
@@ -119,9 +106,7 @@ function benchmark() {
             process.exit();
           }
 
-          total_time = (Date.now() - start_time) / 1000;
-
-          results.init = total_time;
+          results.init = helper.roundWithPrecision(helper.hrtimeDeltaInSeconds(start_hrtime), 3);
 
           escapeBenchmark(results, callback, cfg);
         });
@@ -139,7 +124,7 @@ function benchmark() {
         callback = function() {
           process.stdout.write(JSON.stringify(results));
         };
-    startBenchmark(results, callback, JSON.parse(cfg));
+    initBenchmark(results, callback, JSON.parse(cfg));
   });
   process.stdin.resume();
 }

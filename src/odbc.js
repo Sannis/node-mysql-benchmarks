@@ -9,17 +9,14 @@
 function benchmark() {
   // Require modules
   var
-    odbcDatabase,
+    OdbcDatabase,
+    helper = require('./helper'),
     conn;
 
   function fetchAllAsyncBenchmark(results, callback, cfg) {
-    var
-      start_time,
-      total_time,
-      res,
-      rows;
+    var start_hrtime;
 
-    start_time = Date.now();
+    start_hrtime = process.hrtime();
 
     conn.query(cfg.select_query, function(error, result) {
       if (error) {
@@ -27,9 +24,7 @@ function benchmark() {
         process.exit();
       }
 
-      total_time = (Date.now() - start_time) / 1000;
-
-      results['selects'] =  Math.round(result.length / total_time);
+      results.selects =  Math.round(result.length / helper.hrtimeDeltaInSeconds(start_hrtime));
 
       // Finish benchmark
       callback(results);
@@ -37,12 +32,9 @@ function benchmark() {
   }
 
   function insertAsyncBenchmark(results, callback, cfg) {
-    var
-      start_time,
-      total_time,
-      i = 0;
+    var start_hrtime, i = 0;
 
-    start_time = Date.now();
+    start_hrtime = process.hrtime();
 
     function insertAsync() {
       i += 1;
@@ -56,9 +48,7 @@ function benchmark() {
           insertAsync();
         });
       } else {
-        total_time = (Date.now() - start_time) / 1000;
-
-        results['inserts'] = Math.round(cfg.insert_rows_count / total_time);
+        results.inserts = Math.round(cfg.insert_rows_count / helper.hrtimeDeltaInSeconds(start_hrtime));
 
         setTimeout(function () {
           fetchAllAsyncBenchmark(results, callback, cfg);
@@ -69,15 +59,14 @@ function benchmark() {
     insertAsync();
   }
 
-  function startBenchmark(results, callback, cfg) {
+  function initBenchmark(results, callback, cfg) {
     var
-      start_time,
-      total_time,
+      start_hrtime,
       options_string;
 
-    start_time = Date.now();
+    start_hrtime = process.hrtime();
 
-    conn = new odbcDatabase();
+    conn = new OdbcDatabase();
 
     options_string = "DRIVER={MySQL};DATABASE=" + cfg.database
                    + ";USER=" + cfg.user
@@ -102,9 +91,7 @@ function benchmark() {
             process.exit();
           }
 
-          total_time = (Date.now() - start_time) / 1000;
-
-          results['init'] = total_time;
+          results.init = helper.roundWithPrecision(helper.hrtimeDeltaInSeconds(start_hrtime), 3);
 
           insertAsyncBenchmark(results, callback, cfg);
         });
@@ -123,12 +110,12 @@ function benchmark() {
           process.stdout.write(JSON.stringify(results));
         };
     try {
-      odbcDatabase = require('odbc').Database;
+      OdbcDatabase = require('odbc').Database;
     } catch (e) {
       callback(results);
       return;
     }
-    startBenchmark(results, callback, JSON.parse(cfg));
+    initBenchmark(results, callback, JSON.parse(cfg));
   });
   process.stdin.resume();
 }

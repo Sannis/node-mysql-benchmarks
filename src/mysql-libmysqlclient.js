@@ -10,15 +10,15 @@ function benchmark() {
   // Require modules
   var
     mysql = require('mysql-libmysqlclient'),
+    helper = require('./helper'),
     conn;
 
   function selectAsyncBenchmark(results, callback, cfg, benchmark) {
     var
-      start_time,
-      total_time,
+      start_hrtime,
       res;
     
-    start_time = Date.now();
+    start_hrtime = process.hrtime();
     
     res = conn.querySync(cfg.select_query);
     
@@ -28,10 +28,8 @@ function benchmark() {
         process.exit();
       }
       
-      total_time = (Date.now() - start_time) / 1000;
-      
-      results['selects'] = Math.round(cfg.insert_rows_count / total_time);
-      
+      results.selects = Math.round(cfg.insert_rows_count / helper.hrtimeDeltaInSeconds(start_hrtime));
+
       // Close connection
       conn.closeSync();
       
@@ -42,11 +40,10 @@ function benchmark() {
 
   function insertAsyncBenchmark(results, callback, cfg, benchmark) {
     var
-      start_time,
-      total_time,
+      start_hrtime,
       i = 0;
     
-    start_time = Date.now();
+    start_hrtime = process.hrtime();
     
     function insertAsync() {
       i += 1;
@@ -60,9 +57,7 @@ function benchmark() {
           insertAsync();
         });
       } else {
-        total_time = (Date.now() - start_time) / 1000;
-        
-        results.inserts = Math.round(cfg.insert_rows_count / total_time);
+        results.inserts = Math.round(cfg.insert_rows_count / helper.hrtimeDeltaInSeconds(start_hrtime));
         
         setTimeout(function () {
           selectAsyncBenchmark(results, callback, cfg, benchmark);
@@ -75,19 +70,16 @@ function benchmark() {
 
   function selectSyncBenchmark(results, callback, cfg, benchmark) {
     var
-      start_time,
-      total_time,
+      start_hrtime,
       res;
 
-    start_time = Date.now();
+    start_hrtime = process.hrtime();
 
     res = conn.querySync(cfg.select_query);
 
     var rows = res.fetchAllSync();
 
-    total_time = (Date.now() - start_time) / 1000;
-
-    results.selects = Math.round(cfg.insert_rows_count / total_time);
+    results.selects = Math.round(cfg.insert_rows_count / helper.hrtimeDeltaInSeconds(start_hrtime));
 
     // Close connection
     conn.closeSync();
@@ -98,11 +90,10 @@ function benchmark() {
 
   function insertSyncBenchmark(results, callback, cfg, benchmark) {
     var
-      start_time,
-      total_time,
+      start_hrtime,
       i;
     
-    start_time = Date.now();
+    start_hrtime = process.hrtime();
     
     for (i = 0; i < cfg.insert_rows_count; i += 1) {
       if (!conn.querySync(cfg.insert_query)) {
@@ -110,21 +101,18 @@ function benchmark() {
         process.exit();
       }
     }
-    
-    total_time = (Date.now() - start_time) / 1000;
-    
-    results.inserts = Math.round(cfg.insert_rows_count / total_time);
+
+    results.inserts = Math.round(cfg.insert_rows_count / helper.hrtimeDeltaInSeconds(start_hrtime));
 
     selectSyncBenchmark(results, callback, cfg, benchmark);
   }
 
   function reconnectBenchmark(results, callback, cfg, benchmark) {
     var
-      start_time,
-      total_time,
+      start_hrtime,
       i;
 
-    start_time = Date.now();
+    start_hrtime = process.hrtime();
     
     for (i = 0; i < cfg.reconnect_count; i += 1) {
       conn.closeSync();
@@ -133,10 +121,8 @@ function benchmark() {
         process.exit();
       }
     }
-    
-    total_time = (Date.now() - start_time) / 1000;
-    
-    results.reconnects = Math.round(cfg.reconnect_count / total_time);
+
+    results.reconnects = Math.round(cfg.reconnect_count / helper.hrtimeDeltaInSeconds(start_hrtime));
 
     if (benchmark.async) {
       insertAsyncBenchmark(results, callback, cfg, benchmark);
@@ -147,30 +133,25 @@ function benchmark() {
 
   function escapeBenchmark(results, callback, cfg, benchmark) {
     var
-      start_time,
-      total_time,
+      start_hrtime,
       i,
       escaped_string;
 
-    start_time = Date.now();
+    start_hrtime = process.hrtime();
     
     for (i = 0; i < cfg.escapes_count; i += 1) {
       escaped_string = conn.escapeSync(cfg.string_to_escape);
     }
     
-    total_time = (Date.now() - start_time) / 1000;
-    
-    results.escapes = Math.round(cfg.escapes_count / total_time);
+    results.escapes = Math.round(cfg.escapes_count / helper.hrtimeDeltaInSeconds(start_hrtime));
     
     reconnectBenchmark(results, callback, cfg, benchmark);
   }
 
   function initBenchmark(results, callback, cfg, benchmark) {
-    var
-      start_time,
-      total_time;
+    var start_hrtime;
     
-    start_time = Date.now();
+    start_hrtime = process.hrtime();
     
     conn = mysql.createConnectionSync();
     if (!conn.connectSync(cfg.host, cfg.user, cfg.password, cfg.database, cfg.port)) {
@@ -187,10 +168,8 @@ function benchmark() {
       console.error("Query error " + conn.errnoSync() + ": " + conn.errorSync());
       process.exit();
     }
-    
-    total_time = (Date.now() - start_time) / 1000;
-    
-    results.init = total_time;
+
+    results.init = helper.roundWithPrecision(helper.hrtimeDeltaInSeconds(start_hrtime), 3);
     
     escapeBenchmark(results, callback, cfg, benchmark);
   }

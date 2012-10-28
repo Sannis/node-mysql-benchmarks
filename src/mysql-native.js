@@ -11,22 +11,20 @@ function benchmark() {
   var
     util = require('util'),
     mysql = require('mysql-native'),
+    helper = require('./helper'),
     conn;
 
   function selectAsyncBenchmark(results, callback, cfg) {
     var
-      start_time,
-      total_time,
+      start_hrtime,
       rows = [];
     
-    start_time = Date.now();
+    start_hrtime = process.hrtime();
     
     conn.query(cfg.select_query).on('row', function (row) {
       rows.push(row);
     }).on('end', function () {
-      total_time = (Date.now() - start_time) / 1000;
-      
-      results['selects'] = Math.round(cfg.insert_rows_count / total_time);
+      results.selects = Math.round(cfg.insert_rows_count / helper.hrtimeDeltaInSeconds(start_hrtime));
       
       // Close connection
       conn.close();
@@ -38,11 +36,10 @@ function benchmark() {
 
   function insertAsyncBenchmark(results, callback, cfg) {
     var
-      start_time,
-      total_time,
+      start_hrtime,
       i = 0;
     
-    start_time = Date.now();
+    start_hrtime = process.hrtime();
     
     function insertAsync() {
       i += 1;
@@ -51,9 +48,7 @@ function benchmark() {
           insertAsync();
         });
       } else {
-        total_time = (Date.now() - start_time) / 1000;
-        
-        results['inserts'] = Math.round(cfg.insert_rows_count / total_time);
+        results.inserts = Math.round(cfg.insert_rows_count / helper.hrtimeDeltaInSeconds(start_hrtime));
         
         setTimeout(function () {
           selectAsyncBenchmark(results, callback, cfg);
@@ -66,11 +61,10 @@ function benchmark() {
 
   function reconnectAsyncBenchmark(results, callback, cfg) {
     var
-      start_time,
-      total_time,
+      start_hrtime,
       i = 0;
 
-    start_time = Date.now();
+    start_hrtime = process.hrtime();
 
     function reconnectAsync() {
       i += 1;
@@ -82,9 +76,7 @@ function benchmark() {
         });
 
       } else {
-        total_time = (Date.now() - start_time) / 1000;
-        
-        results['reconnects'] = Math.round(cfg.reconnect_count / total_time);
+        results.reconnects = Math.round(cfg.reconnect_count / helper.hrtimeDeltaInSeconds(start_hrtime));
         
         insertAsyncBenchmark(results, callback, cfg);
       }
@@ -93,21 +85,17 @@ function benchmark() {
     reconnectAsync();
   }
 
-  function startBenchmark(results, callback, cfg) {
-    var
-      start_time,
-      total_time;
+  function initBenchmark(results, callback, cfg) {
+    var start_hrtime;
     
-    start_time = Date.now();
+    start_hrtime = process.hrtime();
     
     conn = mysql.createTCPClient(cfg.host, cfg.port);
     
     conn.auth(cfg.database, cfg.user, cfg.password).on('end', function (s) {
       conn.query("DROP TABLE IF EXISTS " + cfg.test_table).on('end', function () {
         conn.query(cfg.create_table_query).on('end', function () {
-          total_time = (Date.now() - start_time) / 1000;
-          
-          results['init'] = total_time;
+          results.init = helper.roundWithPrecision(helper.hrtimeDeltaInSeconds(start_hrtime), 3);
           
           //reconnectAsyncBenchmark(results, callback, cfg);
           insertAsyncBenchmark(results, callback, cfg);
@@ -126,7 +114,7 @@ function benchmark() {
         callback = function() {
           process.stdout.write(JSON.stringify(results));
         };
-    startBenchmark(results, callback, JSON.parse(cfg));
+    initBenchmark(results, callback, JSON.parse(cfg));
   });
   process.stdin.resume();
 }

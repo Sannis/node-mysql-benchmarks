@@ -60,14 +60,14 @@ exports.getConfig = function (factor) {
 
   addBenchmark(cfg, "C",                    false, false);
   addBenchmark(cfg, "PHP",                  false, false);
-  addBenchmark(cfg, "db-mysql",             false, false);
-  addBenchmark(cfg, "mysql",                true,  true,  "mysql");
-  addBenchmark(cfg, "mysql",                true,  false, "mysql *");
-  addBenchmark(cfg, "mysql-libmysqlclient", true,  true,  "mysql-libmysqlclient");
-  addBenchmark(cfg, "mysql-libmysqlclient", false, true,  "mysql-libmysqlclient *");
-  addBenchmark(cfg, "mysql-native",         false, false);
   addBenchmark(cfg, "mariasql",             true,  false);
+  addBenchmark(cfg, "mysql-libmysqlclient", true,  true, "mysql-libmysqlclient");
+  addBenchmark(cfg, "mysql-libmysqlclient", false, true, "mysql-libmysqlclient *");
   addBenchmark(cfg, "odbc",                 false, false);
+  addBenchmark(cfg, "db-mysql",             false, false);
+  addBenchmark(cfg, "mysql",                true, true,  "mysql");
+  addBenchmark(cfg, "mysql",                true, false, "mysql *");
+  addBenchmark(cfg, "mysql-native",         false, false);
 
   return cfg;
 };
