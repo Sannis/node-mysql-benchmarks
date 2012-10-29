@@ -13,12 +13,12 @@ function benchmark() {
     helper = require('./helper'),
     conn;
 
-  function fetchAllAsyncBenchmark(results, callback, cfg) {
+  function fetchAllAsyncBenchmark(results, callback, cfg, benchmark) {
     var start_hrtime;
 
     start_hrtime = process.hrtime();
 
-    conn.query(cfg.select_query).execute(function(error) {
+    conn.query(cfg.select_query).execute(function(error, rows) {
       if (error) {
         console.error(error);
         process.exit();
@@ -28,10 +28,10 @@ function benchmark() {
 
       // Finish benchmark
       callback(results);
-    });
+    }, {cast: benchmark.typeCast});
   }
 
-  function insertAsyncBenchmark(results, callback, cfg) {
+  function insertAsyncBenchmark(results, callback, cfg, benchmark) {
     var start_hrtime, i = 0;
 
     start_hrtime = process.hrtime();
@@ -51,7 +51,7 @@ function benchmark() {
         results.inserts =  Math.round(cfg.insert_rows_count / helper.hrtimeDeltaInSeconds(start_hrtime));
 
         setTimeout(function () {
-          fetchAllAsyncBenchmark(results, callback, cfg);
+          fetchAllAsyncBenchmark(results, callback, cfg, benchmark);
         }, cfg.delay_before_select);
       }
     }
@@ -59,7 +59,7 @@ function benchmark() {
     insertAsync();
   }
 
-  function escapeBenchmark(results, callback, cfg) {
+  function escapeBenchmark(results, callback, cfg, benchmark) {
     var
       start_hrtime,
       i,
@@ -73,10 +73,10 @@ function benchmark() {
 
     results.escapes = Math.round(cfg.escapes_count / helper.hrtimeDeltaInSeconds(start_hrtime));
 
-    insertAsyncBenchmark(results, callback, cfg);
+    insertAsyncBenchmark(results, callback, cfg, benchmark);
   }
 
-  function initBenchmark(results, callback, cfg) {
+  function initBenchmark(results, callback, cfg, benchmark) {
     var start_hrtime;
 
     start_hrtime = process.hrtime();
@@ -108,7 +108,7 @@ function benchmark() {
 
           results.init = helper.roundWithPrecision(helper.hrtimeDeltaInSeconds(start_hrtime), 3);
 
-          escapeBenchmark(results, callback, cfg);
+          escapeBenchmark(results, callback, cfg, benchmark);
         });
       });
     });
@@ -124,7 +124,9 @@ function benchmark() {
         callback = function() {
           process.stdout.write(JSON.stringify(results));
         };
-    initBenchmark(results, callback, JSON.parse(cfg));
+
+    cfg = JSON.parse(cfg);
+    initBenchmark(results, callback, cfg, cfg.benchmark);
   });
   process.stdin.resume();
 }
@@ -133,6 +135,6 @@ if (!module.parent) {
   benchmark();
 }
 
-exports.run = function (callback, cfg) {
-  require('./helper').spawnBenchmark('node', [__filename], callback, cfg);
+exports.run = function (callback, cfg, benchmark) {
+  require('./helper').spawnBenchmark('node', [__filename], callback, cfg, benchmark);
 };
