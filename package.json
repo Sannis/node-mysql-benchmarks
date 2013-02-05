@@ -29,10 +29,10 @@
   "engines": { "node" : ">=0.8.x" },
   "dependencies": {
     "cli-table" : ">=0.0.1",
-    "mysql" : "2.0.0-alpha3",
+    "mysql" : "2.0.0-alpha7",
     "mysql-libmysqlclient" : "1.5.1",
     "mysql-native" : "0.4.7",
     "db-mysql" : "0.7.6",
-    "mariasql" : "0.1.8"
+    "mariasql" : "0.1.13"
   }
 }

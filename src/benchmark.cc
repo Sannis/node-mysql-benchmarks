@@ -18,6 +18,7 @@
 #include <cstdio>
 #include <cstdlib>
 #include <ctime>
+#include <unistd.h>
 
 #include "current_utc_time.h"
 
