@@ -1,38 +1,23 @@
-{ "name": "mysql-benchmarks",
+{ "name": "mysql-modules-benchmarks",
   "description": "Node.js MySQL module benchmarks",
-  "keywords": ["mysql", "sql", "database", "benchmark", "rdbs"],
-  "homepage": "https://github.com/mscdex/node-mysql-benchmarks",
-  "version": "0.3.0",
-  "author": {
-    "name": "Oleg Efimov",
-    "email": "efimovov@gmail.com"
-  },
-  "contributors": [
-    { "name": "Dan VerWeire",
-      "email": "dverweire@gmail.com"
-    },
-    { "name": "Brian White" }
-  ],
-  "bugs": { "url" : "http://github.com/mscdex/node-mysql-benchmarks/issues" },
-  "licenses": [ { "type" : "MIT" } ],
-  "repository": {
-    "type" : "git",
-    "url" : "http://github.com/Sannis/node-mysql-benchmarks.git"
-  },
-  "bin": {
-    "node-mysql-benchmark" : "./bin/node-mysql-benchmark.js"
-  },
+  "keywords": ["mysql", "sql", "database", "benchmarks", "rdbs"],
+  "homepage": "http://mscdex.github.com/node-mysql-modules-benchmarks",
+  "version": "0.0.1",
+  "author": { "name": "Brian White" },
+  "bugs": { "url": "https://github.com/mscdex/node-mysql-modules-benchmarks/issues" },
+  "licenses": [ { "type": "MIT" } ],
+  "repository": { "type": "git", "url": "https://github.com/mscdex/node-mysql-modules-benchmarks.git" },
+  "bin": { "./bin/do-benchmarks.js" },
   "scripts": {
-    "install" : "sh build.sh",
-    "test" : "./bin/node-mysql-benchmark.js"
+    "install": "/usr/bin/env node src/C/_build.js", 
+    "test": "/usr/bin/env node bin/do-benchmarks.js"
   },
   "engines": { "node" : ">=0.8.x" },
   "dependencies": {
-    "cli-table" : ">=0.0.1",
-    "mysql" : "2.0.0-alpha7",
-    "mysql-libmysqlclient" : "1.5.1",
-    "mysql-native" : "0.4.7",
-    "db-mysql" : "0.7.6",
-    "mariasql" : "0.1.13"
+    "mysql": "2.0.0-alpha7",
+    "mysql-libmysqlclient": "1.5.2",
+    "mysql-native": "0.4.7",
+    "db-mysql": "0.7.6",
+    "mariasql": "0.1.17"
   }
 }
