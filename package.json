@@ -7,7 +7,7 @@
   "bugs": { "url": "https://github.com/mscdex/node-mysql-modules-benchmarks/issues" },
   "licenses": [ { "type": "MIT" } ],
   "repository": { "type": "git", "url": "https://github.com/mscdex/node-mysql-modules-benchmarks.git" },
-  "bin": { "./bin/do-benchmarks.js" },
+  "bin":  "./bin/do-benchmarks.js",
   "scripts": {
     "install": "/usr/bin/env node src/C/_build.js", 
     "test": "/usr/bin/env node bin/do-benchmarks.js"
