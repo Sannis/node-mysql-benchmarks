@@ -36,10 +36,10 @@
   { "cli-table" : ">=0.2.0"
   , "argparse":">=0.1.7"
   , "semver":">=1.1.0"
-  , "mysql" : "2.0.0-alpha3"
+  , "mysql" : "2.5.4"
   , "mysql-libmysqlclient" : "1.6.0"
   , "mysql-native" : "0.4.7"
-  , "mariasql" : "0.1.9"
+  , "mariasql" : "0.1.21"
   }
 , "devDependencies" :
   { "nodelint" : "*"
