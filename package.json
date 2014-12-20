@@ -31,7 +31,7 @@
   { "install" : "sh build.sh"
   , "test" : "./bin/node-mysql-benchmark.js"
   }
-, "engines" : { "node" : ">=0.6.x" }
+, "engines" : { "node" : ">=0.8.x" }
 , "dependencies" :
   { "cli-table" : ">=0.2.0"
   , "argparse":">=0.1.7"
