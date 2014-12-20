@@ -39,7 +39,6 @@
   , "mysql" : "2.0.0-alpha3"
   , "mysql-libmysqlclient" : "1.5.1"
   , "mysql-native" : "0.4.7"
-  , "odbc" : "0.3.1"
   , "mariasql" : "0.1.9"
   }
 , "devDependencies" :

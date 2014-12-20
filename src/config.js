@@ -64,7 +64,6 @@ exports.getConfig = function (factor) {
   addBenchmark(cfg, "mariasql",             true,  false);
   addBenchmark(cfg, "mysql-libmysqlclient", true,  true,  "mysql-libmysqlclient");
   addBenchmark(cfg, "mysql-libmysqlclient", false, true,  "mysql-libmysqlclient *");
-  addBenchmark(cfg, "odbc",                 true,  true);
   addBenchmark(cfg, "mysql",                true,  true,  "mysql");
   addBenchmark(cfg, "mysql",                true,  false, "mysql *");
   addBenchmark(cfg, "mysql-native",         true,  true);
