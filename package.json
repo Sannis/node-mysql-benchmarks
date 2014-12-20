@@ -28,7 +28,7 @@
   { "node-mysql-bindings-benchmark" : "./bin/node-mysql-benchmark.js"
   }
 , "scripts" :
-  { "install" : "sh build.sh"
+  { "install" : "make build"
   , "test" : "./bin/node-mysql-benchmark.js"
   }
 , "engines" : { "node" : ">=0.8.x" }
