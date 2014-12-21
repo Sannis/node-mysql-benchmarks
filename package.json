@@ -36,9 +36,9 @@
   { "cli-table" : ">=0.2.0"
   , "argparse":">=0.1.7"
   , "semver":">=1.1.0"
-  , "mysql" : "2.5.4"
   , "mysql-libmysqlclient" : "1.6.0"
-  , "mysql-native" : "0.4.7"
+  , "mysql" : "2.5.4"
+  , "mysql2" : "0.14.1"
   , "mariasql" : "0.1.21"
   }
 , "devDependencies" :

@@ -17,7 +17,7 @@ Supported MySQL bindings
 
 * https://github.com/Sannis/node-mysql-libmysqlclient
 * https://github.com/felixge/node-mysql
-* https://github.com/sidorares/nodejs-mysql-native
+* https://github.com/sidorares/node-mysql2
 * https://github.com/mscdex/node-mariasql
 
 Also includes benchmarks written in PHP and C++.
