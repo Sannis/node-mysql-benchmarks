@@ -1,5 +1,12 @@
-Benchmarks for MySQL bindings for Node.js
-=========================================
+Node.js MySQL clients benchmarks
+================================
+
+[![Build status][Build status image]][Build status URL]
+
+[Build status image]: https://secure.travis-ci.org/Sannis/node-mysql-benchmarks.png?branch=master
+[Build status URL]: http://travis-ci.org/Sannis/node-mysql-benchmarks
+
+-----
 
 You can install this via npm:
 
